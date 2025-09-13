@@ -1,0 +1,414 @@
+import { useContext, useEffect, useState } from 'react';
+import { 
+  FaCheckCircle, 
+  FaEdit, 
+  FaFileAlt, 
+  FaImage, 
+  FaPaperPlane, 
+  FaTrash, 
+  FaCalendarAlt,
+  FaClock,
+  FaCheck,
+  FaSpinner
+} from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import AuthContext from '../../AuthContext/AuthContext';
+import { showError, showSuccess } from '../../utils/toast';
+
+// Helper function to determine event status
+const getEventStatus = (startDate, endDate) => {
+  const now = new Date();
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  
+  if (now < start) return 'upcoming';
+  if (now >= start && now <= end) return 'ongoing';
+  return 'completed';
+};
+
+// Status badge component
+const StatusBadge = ({ status }) => {
+  const statusConfig = {
+    upcoming: { color: 'bg-blue-100 text-blue-800', icon: <FaClock className="mr-1" />, text: 'Upcoming' },
+    ongoing: { color: 'bg-yellow-100 text-yellow-800', icon: <FaSpinner className="mr-1 animate-spin" />, text: 'Ongoing' },
+    completed: { color: 'bg-green-100 text-green-800', icon: <FaCheck className="mr-1" />, text: 'Completed' }
+  };
+  
+  const config = statusConfig[status] || statusConfig.completed;
+  
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}>
+      {config.icon}
+      {config.text}
+    </span>
+  );
+};
+
+const Reports = () => {
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const [events, setEvents] = useState([]);
+    const [upcomingEvents, setUpcomingEvents] = useState([]);
+    const [ongoingEvents, setOngoingEvents] = useState([]);
+    const [completedEvents, setCompletedEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming', 'ongoing', or 'completed'
+    const [reportData, setReportData] = useState({
+        highlights: '',
+        feedback: '',
+        photos: [],
+        isSubmitted: false,
+        reportId: null
+    });
+
+    // Fetch events created by the community user
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                setLoading(true);
+                const token = localStorage.getItem('token');
+                
+                if (!token) {
+                    showError('Authentication required');
+                    navigate('/login');
+                    return;
+                }
+
+                const response = await fetch('http://localhost:3000/api/events/user/my-events', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to fetch events');
+                }
+
+                // Categorize events by status
+                const now = new Date();
+                const categorized = data.data.reduce((acc, event) => {
+                  const status = getEventStatus(event.startDate, event.endDate);
+                  acc[status].push(event);
+                  return acc;
+                }, { upcoming: [], ongoing: [], completed: [] });
+
+                // Sort events by date (soonest first for upcoming/ongoing, most recent first for completed)
+                const sortByDate = (a, b, ascending = true) => {
+                  const dateA = new Date(a.startDate);
+                  const dateB = new Date(b.startDate);
+                  return ascending ? dateA - dateB : dateB - dateA;
+                };
+
+                // Set the categorized events
+                setUpcomingEvents(categorized.upcoming.sort((a, b) => sortByDate(a, b, true)));
+                setOngoingEvents(categorized.ongoing.sort((a, b) => sortByDate(a, b, true)));
+                setCompletedEvents(categorized.completed.sort((a, b) => sortByDate(a, b, false)));
+                
+                // For backward compatibility
+                setEvents([...categorized.upcoming, ...categorized.ongoing]);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+                showError(error.message || 'Failed to fetch events');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (user?.role === 'community') {
+            fetchEvents();
+        } else {
+            navigate('/');
+        }
+    }, [user, navigate]);
+
+    // Mark event as completed
+    const handleMarkAsCompleted = async (eventId) => {
+        try {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                showError('Authentication required');
+                navigate('/login');
+                return;
+            }
+
+            const response = await fetch(`http://localhost:3000/api/events/${eventId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: 'completed' })
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to update event status');
+            }
+
+            // Move event from events to completedEvents
+            const updatedEvent = events.find(event => event._id === eventId);
+            if (updatedEvent) {
+                updatedEvent.status = 'completed';
+                setEvents(events.filter(event => event._id !== eventId));
+                setCompletedEvents([...completedEvents, updatedEvent]);
+                showSuccess('Event marked as completed');
+                
+                // Auto-generate report
+                setSelectedEvent(updatedEvent);
+                generateReport(updatedEvent);
+            }
+        } catch (error) {
+            console.error('Error updating event status:', error);
+            showError(error.message || 'Failed to update event status');
+        }
+    };
+
+    // Generate report for an event
+    const generateReport = async (event) => {
+        try {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                showError('Authentication required');
+                navigate('/login');
+                return;
+            }
+
+            // Create or get report for this event
+            const response = await fetch(`http://localhost:3000/api/reports/event/${event._id}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to generate report');
+            }
+
+            // Set report data with event details
+            setReportData({
+                highlights: data.data.highlights || `${event.title} was successfully held on ${new Date(event.date).toLocaleDateString()}. `,
+                feedback: data.data.feedback || 'Participants enjoyed the event and provided positive feedback.',
+                photos: data.data.photos || [],
+                isSubmitted: data.data.isSubmitted || false,
+                reportId: data.data._id // Store the report ID
+            });
+        } catch (error) {
+            console.error('Error generating report:', error);
+            showError(error.message || 'Failed to generate report');
+        }
+    };
+
+    // Handle report data changes
+    const handleReportChange = (e) => {
+        const { name, value } = e.target;
+        setReportData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    // Handle photo upload
+    const handlePhotoUpload = (e) => {
+        const files = Array.from(e.target.files);
+        const newPhotos = files.map(file => ({
+            file,
+            preview: URL.createObjectURL(file),
+            name: file.name
+        }));
+
+        setReportData(prev => ({
+            ...prev,
+            photos: [...prev.photos, ...newPhotos]
+        }));
+    };
+
+    // Remove photo
+    const handleRemovePhoto = (index) => {
+        const updatedPhotos = [...reportData.photos];
+        URL.revokeObjectURL(updatedPhotos[index].preview);
+        updatedPhotos.splice(index, 1);
+        
+        setReportData(prev => ({
+            ...prev,
+            photos: updatedPhotos
+        }));
+    };
+
+    // Submit report to superadmin
+    const handleSubmitReport = async () => {
+        try {
+            if (!selectedEvent) {
+                showError('No event selected');
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                showError('Authentication required');
+                navigate('/login');
+                return;
+            }
+
+            // Check if we have a report ID
+            if (!reportData.reportId) {
+                throw new Error('Report ID not found. Please try viewing the report again.');
+            }
+
+            // First update the report with the current data
+            const updateResponse = await fetch(`http://localhost:3000/api/reports/${reportData.reportId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    highlights: reportData.highlights,
+                    feedback: reportData.feedback
+                })
+            });
+
+            const updateData = await updateResponse.json();
+            
+            if (!updateResponse.ok) {
+                throw new Error(updateData.message || 'Failed to update report');
+            }
+
+            // Then submit the report
+            const submitResponse = await fetch(`http://localhost:3000/api/reports/${reportData.reportId}/submit`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const submitData = await submitResponse.json();
+            
+            if (!submitResponse.ok) {
+                throw new Error(submitData.message || 'Failed to submit report');
+            }
+
+            setReportData(prev => ({
+                ...prev,
+                isSubmitted: true
+            }));
+            showSuccess('Report submitted to superadmin');
+        } catch (error) {
+            console.error('Error submitting report:', error);
+            showError(error.message || 'Failed to submit report');
+        }
+    };
+
+    // View event details and report
+    const handleViewReport = (event) => {
+        setSelectedEvent(event);
+        // Check if report exists or generate a new one
+        generateReport(event);
+    };
+
+    // Render event card
+    const renderEventCard = (event) => (
+        <div key={event._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <div className="p-4">
+                <div className="flex justify-between items-start">
+                    <h3 className="text-lg font-semibold text-gray-800">{event.title}</h3>
+                    <StatusBadge status={getEventStatus(event.startDate, event.endDate)} />
+                </div>
+                <div className="mt-2 text-sm text-gray-600">
+                    <p className="flex items-center">
+                        <FaCalendarAlt className="mr-2 text-blue-500" />
+                        {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
+                    </p>
+                    <p className="mt-1 text-gray-500">{event.location}</p>
+                </div>
+                <div className="mt-3 flex justify-between items-center">
+                    <span className="text-sm text-gray-500">
+                        {event.attendees?.length || 0} attendees
+                    </span>
+                    <button
+                        onClick={() => handleViewReport(event)}
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                        View Details
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+
+    // Render empty state
+    const renderEmptyState = () => (
+        <div className="text-center py-12 col-span-3">
+            <FaFileAlt className="mx-auto h-12 w-12 text-gray-400" />
+            <h3 className="mt-2 text-sm font-medium text-gray-900">No {activeTab} events</h3>
+            <p className="mt-1 text-sm text-gray-500">
+                {activeTab === 'upcoming' 
+                    ? 'You have no upcoming events.' 
+                    : activeTab === 'ongoing'
+                    ? 'No events are currently in progress.'
+                    : 'No completed events to show.'}
+            </p>
+        </div>
+    );
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+                <div className="text-center mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900">Event Dashboard</h1>
+                    <p className="mt-2 text-sm text-gray-600">
+                        Track and manage all your events in one place
+                    </p>
+                </div>
+
+                {/* Status Summary Cards */}
+                <div className="grid grid-cols-1 gap-5 mt-6 sm:grid-cols-3">
+                    <div 
+                        className={`bg-white overflow-hidden shadow rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${activeTab === 'upcoming' ? 'ring-2 ring-blue-500' : ''}`}
+                        onClick={() => setActiveTab('upcoming')}
+                    >
+                        <div className="px-4 py-5 sm:p-6">
+                            <div className="flex items-center">
+                                <div className="flex-shrink-0 bg-blue-500 rounded-md p-3">
+                                    <FaCalendarAlt className="h-6 w-6 text-white" />
+                                </div>
+                                <div className="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt className="text-sm font-medium text-gray-500 truncate">Upcoming Events</dt>
+                                        <dd className="flex items-baseline">
+                                            <div className="text-2xl font-semibold text-gray-900">
+                                                {upcomingEvents.length}
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default Reports;
