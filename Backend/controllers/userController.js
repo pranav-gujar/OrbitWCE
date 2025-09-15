@@ -33,6 +33,68 @@ exports.getUsers = async (req, res) => {
     }
 };
 
+// @desc    Get all community users (Public)
+// @route   GET /api/users/community
+// @access  Public
+exports.getCommunityUsers = async (req, res) => {
+    try {
+        const communityUsers = await User.find({ role: 'community' })
+            .select('-password -__v -email')
+            .sort({ createdAt: -1 });
+        
+        res.status(200).json({
+            success: true,
+            count: communityUsers.length,
+            data: communityUsers
+        });
+    } catch (error) {
+        console.error('Error getting community users:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error',
+            error: error.message
+        });
+    }
+};
+
+// @desc    Get single community user by ID (Public)
+// @route   GET /api/users/community/:id
+// @access  Public
+exports.getCommunityUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        if (!isValidObjectId(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid user ID format'
+            });
+        }
+        
+        const communityUser = await User.findOne({ _id: id, role: 'community' })
+            .select('-password -__v');
+        
+        if (!communityUser) {
+            return res.status(404).json({
+                success: false,
+                message: 'Community user not found'
+            });
+        }
+        
+        res.status(200).json({
+            success: true,
+            data: communityUser
+        });
+    } catch (error) {
+        console.error('Error getting community user by ID:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error',
+            error: error.message
+        });
+    }
+};
+
 // @desc    Update user role (Admin only)
 // @route   PUT /api/users/:id/role
 // @access  Private/Admin

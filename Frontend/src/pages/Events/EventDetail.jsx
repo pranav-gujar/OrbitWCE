@@ -455,9 +455,14 @@ const EventDetail = () => {
                   className="aspect-square overflow-hidden rounded-lg"
                 >
                   <img 
-                    src={photo} 
+                    src={photo && photo.startsWith('http') ? photo : `${import.meta.env.VITE_API_URL}${photo}`} 
                     alt={`Event photo ${index + 1}`} 
                     className="w-full h-full object-cover transition-transform hover:scale-110"
+                    onError={(e) => {
+                      console.error('Image failed to load:', e.target.src);
+                      e.target.onerror = null;
+                      e.target.src = ''; // Clear the src to prevent further errors
+                    }}
                   />
                 </div>
               ))}

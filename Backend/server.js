@@ -104,7 +104,7 @@ app.use('/api/users', userRouter);
 app.use('/api/events', eventRouter);
 app.use('/api/notifications', notificationRouter);
 app.use('/api/reports', reportRouter);
-app.use('/api', uploadRouter);  // Mount upload routes under /api
+app.use('/api/users', uploadRouter);  // Mount upload routes under /api/users
 
 
 

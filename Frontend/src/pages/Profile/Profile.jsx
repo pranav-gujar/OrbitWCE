@@ -424,9 +424,14 @@ const Profile = () => {
               <div className="w-36 h-36 rounded-full border-4 border-white bg-white overflow-hidden">
                 {user.photo || previewImage ? (
                   <img
-                    src={previewImage || user.photo}
+                    src={previewImage || (user.photo && user.photo.startsWith('http') ? user.photo : `${import.meta.env.VITE_API_URL}${user.photo}`)}
                     alt={user.name || "User"}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      console.error('Image failed to load:', e.target.src);
+                      e.target.onerror = null;
+                      e.target.src = ''; // Clear the src to prevent further errors
+                    }}
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-200 flex items-center justify-center">

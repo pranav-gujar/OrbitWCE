@@ -224,7 +224,6 @@ const Register = () => {
                                                 className='w-full h-14 pl-10 pr-12 rounded-xl bg-white/5 border-2 border-white/10 hover:border-indigo-400/50 focus:border-indigo-500 text-white outline-none appearance-none transition-all duration-300'
                                             >
                                                 <option value="user" className="bg-gray-800 text-white">Regular User</option>
-                                                <option value="community" className="bg-gray-800 text-white">Community Organizer</option>
                                             </Field>
                                             <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                                 <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

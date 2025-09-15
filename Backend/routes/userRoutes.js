@@ -4,6 +4,8 @@ const { protect } = require('../middleware/authMiddleware');
 const User = require('../models/User');
 const { 
     getUsers, 
+    getCommunityUsers,
+    getCommunityUserById,
     updateUserRole, 
     deleteUser,
     updateProfile,
@@ -11,7 +13,14 @@ const {
 } = require('../controllers/userController');
 const { getCurrentUser } = require('../controllers/profileController');
 
-// Apply authentication middleware to all routes
+// Public routes - no authentication required
+router.route('/community')
+    .get(getCommunityUsers);
+
+router.route('/community/:id')
+    .get(getCommunityUserById);
+
+// Apply authentication middleware to all routes below
 router.use(protect);
 
 // User management routes

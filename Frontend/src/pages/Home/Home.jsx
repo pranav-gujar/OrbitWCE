@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaCalendarAlt, FaUsers, FaCode, FaMusic, FaFutbol, FaUserTie, FaLinkedin, FaTwitter, FaGithub } from 'react-icons/fa';
 import { SiLeetcode } from 'react-icons/si';
 import { motion } from 'framer-motion';
 
-// Dummy data for communities
-const communities = Array.from({ length: 15 }, (_, i) => ({
+// Dummy data for communities (will be replaced with real data)
+const dummyCommunities = Array.from({ length: 15 }, (_, i) => ({
   id: i + 1,
   name: `Community ${i + 1}`,
   description: `This is a sample description for Community ${i + 1}. Join us for amazing events and networking opportunities.`,
@@ -72,8 +73,36 @@ const mentor = {
 };
 
 export default function Home() {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('All');
   const [visibleCommunities, setVisibleCommunities] = useState(6);
+  const [communities, setCommunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchCommunityUsers();
+  }, []);
+
+  const fetchCommunityUsers = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/community`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setCommunities(data.data);
+      } else {
+        setError('Failed to load community users');
+        setCommunities(dummyCommunities); // Fallback to dummy data
+      }
+    } catch (err) {
+      console.error('Error fetching community users:', err);
+      setError('Failed to load community users');
+      setCommunities(dummyCommunities); // Fallback to dummy data
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredEvents = activeFilter === 'All' 
     ? events 
@@ -173,49 +202,88 @@ export default function Home() {
       {/* Communities */}
       <section className="py-16 ">
         <div className="container mx-auto px-4 text-gray-100">
-          <h2 className="text-3xl text-gray-100 font-bold text-center mb-12">PGT Communities</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {communities.slice(0, visibleCommunities).map((community, index) => (
-              <motion.div 
-                key={community.id}
-                className="relative border border-gray-200 rounded-lg overflow-hidden bg-transparent transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.8)] hover:-translate-y-1"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-              >
-                <div className="p-6">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-xl">
-                      {community.id}
-                    </div>
-                    <div className="ml-4">
-                      <h3 className="text-lg font-semibold text-gray-200">{community.name}</h3>
-                      <p className="text-sm text-gray-300">{community.members} members</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-300 mb-6">{community.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                      {community.category}
-                    </span>
-                    <button className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
-                      Join Community →
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-          {visibleCommunities < communities.length && (
-            <div className="text-center mt-8">
+          <motion.h2 
+            className="font-bold text-center mb-8 text-3xl text-gray-100"
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            PGT Communities
+          </motion.h2>
+          
+          {loading && (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+              <span className="ml-3 text-gray-300">Loading communities...</span>
+            </div>
+          )}
+
+          {error && !loading && (
+            <div className="text-center py-12">
+              <p className="text-gray-300 mb-4">{error}</p>
               <button 
-                onClick={loadMoreCommunities}
-                className="px-6 py-2 border border-gray-400 text-gray-400 rounded-lg hover:bg-gray-100 transition-colors"
+                onClick={fetchCommunityUsers}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               >
-                Load More
+                Try Again
               </button>
             </div>
+          )}
+
+          {!loading && !error && communities.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-300 text-lg">No community users found yet.</p>
+              <p className="text-gray-400 mt-2">Check back later or contact an administrator.</p>
+            </div>
+          )}
+
+          {!loading && communities.length > 0 && (
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {communities.slice(0, visibleCommunities).map((community, index) => (
+                  <motion.div 
+                    key={community._id || community.id}
+                    className="relative border border-gray-200 rounded-lg overflow-hidden bg-transparent transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.8)] hover:-translate-y-1"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                  >
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-3">
+                        <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                          Community
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2 text-gray-200">{community.name}</h3>
+                      <p className="text-slate-300 mb-4">
+                        {community.bio || community.motto || `Welcome to ${community.name}'s community. Join us for amazing events and networking opportunities.`}
+                      </p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-300">{community.role || 'Community'}</span>
+                        <button 
+                          onClick={() => navigate(`/community/${community._id || community.id}`)}
+                          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                        >
+                          View Profile
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              {visibleCommunities < communities.length && (
+                <div className="text-center mt-8">
+                  <button 
+                    onClick={loadMoreCommunities}
+                    className="px-6 py-2 border border-gray-400 text-gray-400 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Load More Communities
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>

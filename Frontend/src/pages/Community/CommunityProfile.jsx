@@ -1,0 +1,386 @@
+import { useState, useEffect, useContext } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import {
+  FaUser,
+  FaEnvelope,
+  FaGlobe,
+  FaQuoteLeft,
+  FaUserFriends,
+  FaCalendarAlt,
+  FaImage,
+  FaLinkedin,
+  FaGithub,
+  FaTwitter,
+  FaArrowLeft
+} from 'react-icons/fa';
+import AuthContext from '../../AuthContext/AuthContext';
+import { showError } from '../../utils/toast';
+
+const CommunityProfile = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  
+  const [communityUser, setCommunityUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState([]);
+  const [activeTab, setActiveTab] = useState('about');
+
+  useEffect(() => {
+    fetchCommunityUser();
+    fetchCommunityEvents();
+  }, [id]);
+
+  const fetchCommunityUser = async () => {
+    try {
+      setLoading(true);
+      // Get token from localStorage
+      const token = localStorage.getItem('token');
+      
+      // Prepare headers with token if available
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/community/${id}`, {
+        headers
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch community profile');
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setCommunityUser(data.data);
+      } else {
+        throw new Error(data.message || 'Failed to fetch community profile');
+      }
+    } catch (error) {
+      console.error('Error fetching community profile:', error);
+      showError(error.message || 'Failed to fetch community profile');
+      navigate('/');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCommunityEvents = async () => {
+    try {
+      // Get token from localStorage
+      const token = localStorage.getItem('token');
+      
+      // Prepare headers with token if available
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/events?creator=${id}`, {
+        headers
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch community events');
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setEvents(data.data || []);
+      } else {
+        throw new Error(data.message || 'Failed to fetch community events');
+      }
+    } catch (error) {
+      console.error('Error fetching community events:', error);
+      // Don't show error for events, just keep the array empty
+      setEvents([]);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center p-8">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading community profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!communityUser) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center p-8 bg-white rounded-lg shadow-md max-w-md w-full mx-4">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            Community not found
+          </h2>
+          <p className="text-gray-600 mb-6">
+            The community profile you're looking for doesn't exist or has been removed.
+          </p>
+          <button
+            onClick={() => navigate('/')}
+            className="inline-block bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg"
+          >
+            Go to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Back button */}
+        <div className="mb-6">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center text-gray-300 hover:text-white transition-colors"
+          >
+            <FaArrowLeft className="mr-2" />
+            Back to Home
+          </button>
+        </div>
+
+        {/* Profile Header */}
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg shadow-xl overflow-hidden mb-8">
+          <div className="p-6 sm:p-10">
+            <div className="flex flex-col md:flex-row items-center md:items-start">
+              {/* Profile Image */}
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold mb-4 md:mb-0 md:mr-8">
+                {communityUser.photo ? (
+                  <img
+                    src={communityUser.photo && communityUser.photo.startsWith('http') ? communityUser.photo : `${import.meta.env.VITE_API_URL}${communityUser.photo}`}
+                    alt={communityUser.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      console.error('Image failed to load:', e.target.src);
+                      e.target.style.display = 'none';
+                      e.target.parentNode.innerHTML = communityUser.name?.charAt(0).toUpperCase() || 'C';
+                    }}
+                  />
+                ) : (
+                  communityUser.name?.charAt(0).toUpperCase() || 'C'
+                )}
+              </div>
+
+              {/* Profile Info */}
+              <div className="text-center md:text-left flex-1">
+                <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{communityUser.name}</h1>
+                <p className="text-gray-300 text-lg mb-4">{communityUser.role}</p>
+                
+                {communityUser.motto && (
+                  <div className="flex items-center justify-center md:justify-start mb-4">
+                    <FaQuoteLeft className="text-gray-400 mr-2" />
+                    <p className="text-gray-300 italic">{communityUser.motto}</p>
+                  </div>
+                )}
+
+                <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-4">
+                  {communityUser.email && (
+                    <div className="flex items-center text-gray-300">
+                      <FaEnvelope className="mr-2 text-gray-400" />
+                      <span>{communityUser.email}</span>
+                    </div>
+                  )}
+                  
+                  {communityUser.website && (
+                    <div className="flex items-center text-gray-300">
+                      <FaGlobe className="mr-2 text-gray-400" />
+                      <a 
+                        href={communityUser.website.startsWith('http') ? communityUser.website : `https://${communityUser.website}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="hover:text-blue-400 transition-colors"
+                      >
+                        {communityUser.website}
+                      </a>
+                    </div>
+                  )}
+                </div>
+
+                {/* Social Links */}
+                <div className="flex justify-center md:justify-start space-x-4">
+                  {communityUser.linkedin && (
+                    <a 
+                      href={communityUser.linkedin.startsWith('http') ? communityUser.linkedin : `https://${communityUser.linkedin}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-blue-500 transition-colors"
+                    >
+                      <FaLinkedin size={24} />
+                    </a>
+                  )}
+                  
+                  {communityUser.github && (
+                    <a 
+                      href={communityUser.github.startsWith('http') ? communityUser.github : `https://github.com/${communityUser.github}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      <FaGithub size={24} />
+                    </a>
+                  )}
+                  
+                  {communityUser.twitter && (
+                    <a 
+                      href={communityUser.twitter.startsWith('http') ? communityUser.twitter : `https://twitter.com/${communityUser.twitter}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-blue-400 transition-colors"
+                    >
+                      <FaTwitter size={24} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="mb-8 border-b border-gray-700">
+          <nav className="flex overflow-x-auto">
+            <button
+              onClick={() => setActiveTab('about')}
+              className={`px-4 py-3 font-medium text-sm whitespace-nowrap ${activeTab === 'about' ? 'text-white border-b-2 border-red-500' : 'text-gray-400 hover:text-white'}`}
+            >
+              About
+            </button>
+            <button
+              onClick={() => setActiveTab('team')}
+              className={`px-4 py-3 font-medium text-sm whitespace-nowrap ${activeTab === 'team' ? 'text-white border-b-2 border-red-500' : 'text-gray-400 hover:text-white'}`}
+            >
+              Team Members
+            </button>
+            <button
+              onClick={() => setActiveTab('events')}
+              className={`px-4 py-3 font-medium text-sm whitespace-nowrap ${activeTab === 'events' ? 'text-white border-b-2 border-red-500' : 'text-gray-400 hover:text-white'}`}
+            >
+              Events
+            </button>
+          </nav>
+        </div>
+
+        {/* Tab Content */}
+        <div className="mb-8">
+          {/* About Tab */}
+          {activeTab === 'about' && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="bg-gray-800 rounded-lg shadow-md p-6"
+            >
+              <h2 className="text-2xl font-bold text-white mb-4">About</h2>
+              <div className="prose prose-lg prose-invert max-w-none">
+                <p className="text-gray-300">
+                  {communityUser.bio || `${communityUser.name} is a community member of PGT Global Networks.`}
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Team Members Tab */}
+          {activeTab === 'team' && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="bg-gray-800 rounded-lg shadow-md p-6"
+            >
+              <h2 className="text-2xl font-bold text-white mb-4">Team Members</h2>
+              
+              {communityUser.teamMembers && communityUser.teamMembers.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {communityUser.teamMembers.map((member, index) => (
+                    <div key={index} className="bg-gray-700 rounded-lg p-4">
+                      <div className="flex items-center mb-3">
+                        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                          {member.name?.charAt(0).toUpperCase() || 'M'}
+                        </div>
+                        <div className="ml-3">
+                          <h3 className="text-white font-medium">{member.name}</h3>
+                          <p className="text-gray-400 text-sm">{member.role}</p>
+                        </div>
+                      </div>
+                      {member.bio && <p className="text-gray-300 text-sm">{member.bio}</p>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-400">No team members have been added yet.</p>
+              )}
+            </motion.div>
+          )}
+
+          {/* Events Tab */}
+          {activeTab === 'events' && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="bg-gray-800 rounded-lg shadow-md p-6"
+            >
+              <h2 className="text-2xl font-bold text-white mb-4">Events Created by {communityUser.name}</h2>
+              
+              {events.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {events.map((event) => (
+                    <div 
+                      key={event._id} 
+                      className="bg-gray-700 rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+                      onClick={() => navigate(`/events/${event._id}`)}
+                    >
+                      <div className="h-40 bg-gray-600 relative">
+                        {event.imageUrl ? (
+                          <>
+                            <img 
+                              src={event.imageUrl} 
+                              alt={event.title} 
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                // Don't hide the image element, just show the fallback icon
+                                e.target.style.display = 'none';
+                                // Make sure the fallback div is visible
+                                const fallbackDiv = e.target.parentNode.querySelector('.fallback-image');
+                                if (fallbackDiv) {
+                                  fallbackDiv.style.display = 'flex';
+                                }
+                              }}
+                            />
+                            <div className="fallback-image w-full h-full flex items-center justify-center" style={{display: 'none'}}>
+                              <FaImage className="text-gray-500" size={40} />
+                            </div>
+                          </>
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <FaImage className="text-gray-500" size={40} />
+                          </div>
+                        )}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                          <h3 className="text-white font-medium truncate">{event.title}</h3>
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <div className="flex items-center text-gray-300 text-sm mb-2">
+                          <FaCalendarAlt className="mr-2" />
+                          <span>{new Date(event.date).toLocaleDateString()}</span>
+                        </div>
+                        <p className="text-gray-400 text-sm line-clamp-2">{event.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-400">No events have been created by {communityUser.name} yet.</p>
+              )}
+            </motion.div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CommunityProfile;

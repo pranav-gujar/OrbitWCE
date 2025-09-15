@@ -158,7 +158,7 @@ exports.getEventCounts = async (req, res) => {
 
 exports.getEvents = async (req, res) => {
     try {
-        const { status } = req.query;
+        const { status, creator } = req.query;
         let query = {};
 
         // Determine requester role – check req.user (if protected) or decode header token
@@ -180,6 +180,11 @@ exports.getEvents = async (req, res) => {
         } else if (status && ['pending', 'approved', 'rejected'].includes(status)) {
             // superadmin can filter by status via query param
             query.status = status;
+        }
+        
+        // Filter by creator if provided
+        if (creator) {
+            query.creator = creator;
         }
 
         const events = await Event.find(query)

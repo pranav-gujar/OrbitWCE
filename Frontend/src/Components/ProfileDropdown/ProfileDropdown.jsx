@@ -57,12 +57,16 @@ const ProfileDropdown = ({ user, onLogout }) => {
         aria-expanded={isOpen}
       >
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center overflow-hidden ring-2 ring-white  transition-all duration-200">
-          {user?.profilePicture ? (
+          {user?.profilePicture || user?.photo ? (
             <img 
-              src={user.profilePicture} 
+              src={user.profilePicture ? 
+                (user.profilePicture.startsWith('http') ? user.profilePicture : `${import.meta.env.VITE_API_URL}${user.profilePicture}`) : 
+                (user.photo && user.photo.startsWith('http') ? user.photo : `${import.meta.env.VITE_API_URL}${user.photo}`)
+              } 
               alt={user.name || 'Profile'} 
               className="w-full h-full object-cover"
               onError={(e) => {
+                console.error('Image failed to load:', e.target.src);
                 e.target.onerror = null;
                 e.target.style.display = 'none';
                 e.target.nextSibling.style.display = 'block';

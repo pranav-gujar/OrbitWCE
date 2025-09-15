@@ -5,7 +5,14 @@ export default defineConfig({
   plugins: [tailwindcss(), react()],
   server: {
     port: 5173,
-    open: true
+    open: true,
+    proxy: {
+      '/uploads': {
+        target: process.env.VITE_API_URL || 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   },
   esbuild: {
     // Remove the jsx option from the React plugin and set it in esbuild config

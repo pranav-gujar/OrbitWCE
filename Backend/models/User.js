@@ -1,6 +1,23 @@
 const { Schema, model } = require('mongoose');
 
-const roles = ['user', 'community', 'superadmin'];
+const roles = [
+    'user', 
+    'community-youth-coordinator', 
+    'community-education-leader', 
+    'community-health-advocate', 
+    'community-environmental-lead', 
+    'community-arts-culture', 
+    'community-sports-coordinator', 
+    'community-business-leader', 
+    'community-religious-leader', 
+    'community-social-worker', 
+    'community-tech-coordinator', 
+    'community-volunteer-coordinator', 
+    'community-senior-coordinator',
+    'community',
+    'admin', 
+    'superadmin'
+];
 
 const TeamMemberSchema = new Schema({
     name: String,

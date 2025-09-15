@@ -5,7 +5,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "seed:community": "node scripts/seedCommunityRoles.js",
+    "seed:all": "node scripts/seedSuperAdmin.js && node scripts/seedCommunityRoles.js",
+    "update:community": "node scripts/updateCommunityRoles.js",
+    "update:existing": "node scripts/updateExistingRoles.js"
   },
   "license": "ISC",
   "dependencies": {

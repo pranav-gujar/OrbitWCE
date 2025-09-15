@@ -417,9 +417,15 @@ const Dashboard = () => {
                     {user?.photo ? (
                       <div className="mb-4 md:mb-0 md:mr-6">
                         <img 
-                          src={user.photo} 
+                          src={user.photo && user.photo.startsWith('http') ? user.photo : `${import.meta.env.VITE_API_URL}${user.photo}`} 
                           alt={user.name} 
                           className="w-32 h-32 rounded-full object-cover border-2 border-blue-500 shadow-md"
+                          onError={(e) => {
+                            console.error('Image failed to load:', e.target.src);
+                            e.target.onerror = null;
+                            e.target.style.display = 'none';
+                            e.target.parentNode.innerHTML = '<div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center"><span class="text-gray-400 text-4xl">'+user.name?.charAt(0).toUpperCase()+'</span></div>';
+                          }}
                         />
                       </div>
                     ) : (

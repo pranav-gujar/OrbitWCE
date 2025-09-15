@@ -29,6 +29,7 @@ import Reports from './pages/Reports/Reports';
 import SuperAdminReports from './pages/Reports/SuperAdminReports';
 import Permissions from './pages/SuperAdmin/Permissions';
 import SuperApp from './pages/SuperAdmin/SuperApp';
+import CommunityProfile from './pages/Community/CommunityProfile';
 
 // Component to normalize the path by removing extra slashes
 const NormalizedRoute = ({ children }) => {
@@ -126,6 +127,9 @@ function App() {
             {/* Public Event Routes */}
             <Route path="/events" element={<Events />} />
             <Route path="/events/:id" element={<EventDetail />} />
+            
+            {/* Community Profile Route */}
+            <Route path="/community/:id" element={<CommunityProfile />} />
             
             {/* Protected User Routes - Block SuperAdmin */}
             <Route element={<UserRoute />}>
