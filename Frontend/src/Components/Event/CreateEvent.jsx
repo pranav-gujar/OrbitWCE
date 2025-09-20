@@ -133,7 +133,7 @@ const CreateEvent = ({ onEventCreated, editingEvent }) => {
     try {
       setIsLoading(true);
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -312,7 +312,7 @@ const CreateEvent = ({ onEventCreated, editingEvent }) => {
       setIsLoading(true);
       setUploadProgress(0);
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -700,45 +700,15 @@ const CreateEvent = ({ onEventCreated, editingEvent }) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1">
-                    URL or File
+                    URL
                   </label>
-                  <div className="space-y-2">
-                    {link.uploadedFileUrl ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="flex-1">
-                          <img 
-                            src={link.uploadedFileUrl} 
-                            alt={link.title || 'Link image'} 
-                            className="h-12 w-12 object-cover rounded"
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => clearLinkFile(index)}
-                          className="text-red-400 hover:text-red-300"
-                        >
-                          <FaTrash />
-                        </button>
-                      </div>
-                    ) : (
-                      <>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleLinkFileUpload(index, e.target.files[0])}
-                          className="w-full px-4 py-2 bg-gray-700 border border-gray-500 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500"
-                          disabled={isLoading}
-                        />
-                        <input
-                          type="url"
-                          value={link.url}
-                          onChange={(e) => handleLinkChange(index, 'url', e.target.value)}
-                          className="w-full px-4 py-2 bg-gray-700 border border-gray-500 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500"
-                          placeholder="https://example.com"
-                        />
-                      </>
-                    )}
-                  </div>
+                  <input
+                    type="url"
+                    value={link.url}
+                    onChange={(e) => handleLinkChange(index, 'url', e.target.value)}
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-500 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                    placeholder="https://example.com"
+                  />
                 </div>
               </div>
             </div>

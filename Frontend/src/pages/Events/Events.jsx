@@ -133,6 +133,11 @@ const Events = () => {
       setIsLoading(true);
       
       let url = `${import.meta.env.VITE_API_URL}/api/events`;
+      
+      // If user is a community member, only fetch their events
+      if (user?.role === 'community') {
+        url = `${import.meta.env.VITE_API_URL}/api/events/user/my-events`;
+      }
       let likedEvents = [];
       let registeredEvents = [];
       let headers = {

@@ -225,6 +225,52 @@ const Dashboard = () => {
       }));
     }
   };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+
+    // Check file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size should not exceed 5MB');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Update the profile data with the new photo URL
+        setProfileData(prev => ({
+          ...prev,
+          photo: data.url
+        }));
+      } else {
+        alert(data.message || 'Failed to upload photo');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Error uploading photo');
+    }
+  };
   
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
@@ -354,15 +400,46 @@ const Dashboard = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-300">Photo URL</label>
-                      <input
-                        type="text"
-                        name="photo"
-                        value={profileData.photo}
-                        onChange={handleInputChange}
-                        placeholder="https://example.com/photo.jpg"
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      />
+                      <label className="block text-sm font-medium text-gray-300">Profile Photo</label>
+                      {profileData.photo ? (
+                        <div className="mt-2 flex items-center space-x-4">
+                          <img 
+                            src={profileData.photo} 
+                            alt="Profile" 
+                            className="h-16 w-16 rounded-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setProfileData(prev => ({ ...prev, photo: '' }))}
+                            className="text-red-400 hover:text-red-300 text-sm"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                          <div className="space-y-1 text-center">
+                            <div className="flex text-sm text-gray-400">
+                              <label
+                                htmlFor="file-upload"
+                                className="relative cursor-pointer bg-gray-700 rounded-md font-medium text-red-400 hover:text-red-300 focus-within:outline-none"
+                              >
+                                <span>Upload a file</span>
+                                <input 
+                                  id="file-upload" 
+                                  name="file-upload" 
+                                  type="file" 
+                                  className="sr-only"
+                                  accept="image/*"
+                                  onChange={handleFileUpload}
+                                />
+                              </label>
+                              <p className="pl-1">or drag and drop</p>
+                            </div>
+                            <p className="text-xs text-gray-400">PNG, JPG, GIF up to 5MB</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     
                     <div>
