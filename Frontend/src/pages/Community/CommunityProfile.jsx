@@ -222,44 +222,25 @@ const CommunityProfile = () => {
               {/* Profile Image */}
               <div className="relative group mb-4 md:mb-0 md:mr-8">
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
-                  {(() => {
-                    // If no photo, show initial
-                    if (!communityUser.photo) {
-                      return (
-                        <div className="w-full h-full flex items-center justify-center">
-                          {communityUser.name?.charAt(0).toUpperCase() || 'C'}
-                        </div>
-                      );
-                    }
-
-                    // If it's a full URL, use it directly
-                    if (communityUser.photo.startsWith('http')) {
-                      return (
-                        <img
-                          src={communityUser.photo}
-                          alt={communityUser.name || 'Profile'}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                          onError={handleImageError}
-                        />
-                      );
-                    }
-
-                    // For local paths, use the proxy URL
-                    const imageUrl = communityUser.photo.startsWith('/') 
-                      ? communityUser.photo 
-                      : `/${communityUser.photo}`;
-                    
-                    return (
-                      <img
-                        src={imageUrl}
-                        alt={communityUser.name || 'Profile'}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        onError={handleImageError}
-                      />
-                    );
-                  })()}
+                  {communityUser?.photo ? (
+                    <img
+                      src={communityUser.photo.startsWith('http') ? communityUser.photo : `${import.meta.env.VITE_API_URL}${communityUser.photo}`}
+                      alt={communityUser.name || 'Profile'}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // Fallback to showing the user's initial if image fails to load
+                        e.target.style.display = 'none';
+                        const initial = document.createElement('div');
+                        initial.className = 'w-full h-full flex items-center justify-center';
+                        initial.textContent = communityUser.name?.charAt(0).toUpperCase() || 'C';
+                        e.target.parentNode.appendChild(initial);
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      {communityUser.name?.charAt(0).toUpperCase() || 'C'}
+                    </div>
+                  )}
                 </div>
                 
                 {/* Upload/Remove Overlay - Only show for the profile owner */}
