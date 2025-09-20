@@ -93,18 +93,28 @@ const EventDetail = () => {
     fetchEvent();
   }, [id]);
 
-  const handleRegistrationOpen = (subEvent) => {
+  const handleRegistrationOpen = (e, subEvent) => {
+    e.stopPropagation();
+    
+    // Check if user is logged in before allowing registration
+    if (!user) {
+      // Show login message if user is not logged in
+      alert('Please login first to register for this event');
+      navigate('/login');
+      return;
+    }
+    
     setSelectedSubEvent(subEvent);
     setRegistrationOpen(true);
     
-    // Pre-fill form with user data if available
-    if (user) {
-      setRegistrationForm(prev => ({
-        ...prev,
-        name: user.name || '',
-        email: user.email || ''
-      }));
-    }
+    // Pre-fill form with user data
+    setRegistrationForm(prev => ({
+      ...prev,
+      name: user.name || '',
+      email: user.email || ''
+    }));
+    
+    if (onRegister) onRegister(id);
   };
 
   const handleRegistrationClose = () => {
@@ -319,7 +329,7 @@ const EventDetail = () => {
                   </button>
                 ) : (
                   <button
-                    onClick={() => handleRegistrationOpen(null)}
+                    onClick={(e) => handleRegistrationOpen(e, null)}
                     className="mt-6 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-md transition-colors"
                   >
                     Register Now
