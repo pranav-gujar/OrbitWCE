@@ -206,13 +206,22 @@ const CommunityProfile = () => {
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
                   {communityUser.photo ? (
                     <img
-                      src={communityUser.photo && communityUser.photo.startsWith('http') ? communityUser.photo : `${import.meta.env.VITE_API_URL}${communityUser.photo}`}
+                      src={communityUser.photo ? 
+                        (communityUser.photo.startsWith('http') ? 
+                          communityUser.photo : 
+                          `${import.meta.env.VITE_API_URL}${communityUser.photo.startsWith('/') ? '' : '/'}${communityUser.photo}`
+                        ) : ''
+                      }
                       alt={communityUser.name}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                       onError={(e) => {
                         console.error('Image failed to load:', e.target.src);
                         e.target.style.display = 'none';
-                        e.target.parentNode.innerHTML = communityUser.name?.charAt(0).toUpperCase() || 'C';
+                        const fallback = document.createElement('div');
+                        fallback.className = 'w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white text-4xl font-bold';
+                        fallback.textContent = communityUser.name?.charAt(0).toUpperCase() || 'C';
+                        e.target.parentNode.replaceChild(fallback, e.target);
                       }}
                     />
                   ) : (
