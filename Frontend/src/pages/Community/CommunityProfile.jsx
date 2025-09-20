@@ -24,6 +24,24 @@ const CommunityProfile = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   
+  const handleImageError = (e) => {
+    console.error('Image failed to load:', {
+      originalSrc: communityUser?.photo,
+      currentSrc: e.target.src,
+      timestamp: new Date().toISOString()
+    });
+    
+    // If we're here, both the main and fallback images failed to load
+    const container = e.target.parentNode;
+    if (container) {
+      container.innerHTML = `
+        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white text-4xl font-bold">
+          ${communityUser?.name?.charAt(0)?.toUpperCase() || 'C'}
+        </div>
+      `;
+    }
+  };
+  
   const [communityUser, setCommunityUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState([]);
@@ -204,29 +222,44 @@ const CommunityProfile = () => {
               {/* Profile Image */}
               <div className="relative group mb-4 md:mb-0 md:mr-8">
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
-                  {communityUser.photo ? (
-                    <img
-                      src={communityUser.photo ? 
-                        (communityUser.photo.startsWith('http') ? 
-                          communityUser.photo : 
-                          `${import.meta.env.VITE_API_URL}${communityUser.photo.startsWith('/') ? '' : '/'}${communityUser.photo}`
-                        ) : ''
-                      }
-                      alt={communityUser.name}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      onError={(e) => {
-                        console.error('Image failed to load:', e.target.src);
-                        e.target.style.display = 'none';
-                        const fallback = document.createElement('div');
-                        fallback.className = 'w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white text-4xl font-bold';
-                        fallback.textContent = communityUser.name?.charAt(0).toUpperCase() || 'C';
-                        e.target.parentNode.replaceChild(fallback, e.target);
-                      }}
-                    />
-                  ) : (
-                    communityUser.name?.charAt(0).toUpperCase() || 'C'
-                  )}
+                  {(() => {
+                    // If no photo, show initial
+                    if (!communityUser.photo) {
+                      return (
+                        <div className="w-full h-full flex items-center justify-center">
+                          {communityUser.name?.charAt(0).toUpperCase() || 'C'}
+                        </div>
+                      );
+                    }
+
+                    // If it's a full URL, use it directly
+                    if (communityUser.photo.startsWith('http')) {
+                      return (
+                        <img
+                          src={communityUser.photo}
+                          alt={communityUser.name || 'Profile'}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          onError={handleImageError}
+                        />
+                      );
+                    }
+
+                    // For local paths, use the proxy URL
+                    const imageUrl = communityUser.photo.startsWith('/') 
+                      ? communityUser.photo 
+                      : `/${communityUser.photo}`;
+                    
+                    return (
+                      <img
+                        src={imageUrl}
+                        alt={communityUser.name || 'Profile'}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        onError={handleImageError}
+                      />
+                    );
+                  })()}
                 </div>
                 
                 {/* Upload/Remove Overlay - Only show for the profile owner */}
