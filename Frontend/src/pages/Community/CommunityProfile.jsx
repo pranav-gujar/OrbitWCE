@@ -12,10 +12,12 @@ import {
   FaLinkedin,
   FaGithub,
   FaTwitter,
-  FaArrowLeft
+  FaArrowLeft,
+  FaTrash,
+  FaUpload
 } from 'react-icons/fa';
 import AuthContext from '../../AuthContext/AuthContext';
-import { showError } from '../../utils/toast';
+import { showError, showSuccess } from '../../utils/toast';
 
 const CommunityProfile = () => {
   const { id } = useParams();
@@ -26,6 +28,7 @@ const CommunityProfile = () => {
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState([]);
   const [activeTab, setActiveTab] = useState('about');
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     fetchCommunityUser();
@@ -95,6 +98,59 @@ const CommunityProfile = () => {
     }
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      showError('Please upload an image file');
+      return;
+    }
+
+    // Check file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      showError('File size should not exceed 5MB');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    try {
+      setIsUploading(true);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Update the community user data with the new photo URL
+        const updatedUser = { ...communityUser, photo: data.url };
+        setCommunityUser(updatedUser);
+        showSuccess('Profile photo updated successfully');
+      } else {
+        throw new Error(data.message || 'Failed to upload photo');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      showError(error.message || 'Error uploading photo');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    const updatedUser = { ...communityUser, photo: '' };
+    setCommunityUser(updatedUser);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -146,20 +202,54 @@ const CommunityProfile = () => {
           <div className="p-6 sm:p-10">
             <div className="flex flex-col md:flex-row items-center md:items-start">
               {/* Profile Image */}
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold mb-4 md:mb-0 md:mr-8">
-                {communityUser.photo ? (
-                  <img
-                    src={communityUser.photo && communityUser.photo.startsWith('http') ? communityUser.photo : `${import.meta.env.VITE_API_URL}${communityUser.photo}`}
-                    alt={communityUser.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      console.error('Image failed to load:', e.target.src);
-                      e.target.style.display = 'none';
-                      e.target.parentNode.innerHTML = communityUser.name?.charAt(0).toUpperCase() || 'C';
-                    }}
-                  />
-                ) : (
-                  communityUser.name?.charAt(0).toUpperCase() || 'C'
+              <div className="relative group mb-4 md:mb-0 md:mr-8">
+                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
+                  {communityUser.photo ? (
+                    <img
+                      src={communityUser.photo && communityUser.photo.startsWith('http') ? communityUser.photo : `${import.meta.env.VITE_API_URL}${communityUser.photo}`}
+                      alt={communityUser.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        console.error('Image failed to load:', e.target.src);
+                        e.target.style.display = 'none';
+                        e.target.parentNode.innerHTML = communityUser.name?.charAt(0).toUpperCase() || 'C';
+                      }}
+                    />
+                  ) : (
+                    communityUser.name?.charAt(0).toUpperCase() || 'C'
+                  )}
+                </div>
+                
+                {/* Upload/Remove Overlay - Only show for the profile owner */}
+                {user?._id === communityUser._id && (
+                  <div className="absolute inset-0 rounded-full bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="flex flex-col items-center space-y-2">
+                      <label className="cursor-pointer p-2 text-white hover:text-blue-300">
+                        <FaUpload className="text-xl" />
+                        <input 
+                          type="file" 
+                          className="hidden" 
+                          accept="image/*"
+                          onChange={handleFileUpload}
+                          disabled={isUploading}
+                        />
+                      </label>
+                      {communityUser.photo && (
+                        <button 
+                          onClick={handleRemovePhoto}
+                          className="p-2 text-white hover:text-red-400"
+                          disabled={isUploading}
+                        >
+                          <FaTrash className="text-xl" />
+                        </button>
+                      )}
+                    </div>
+                    {isUploading && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 
