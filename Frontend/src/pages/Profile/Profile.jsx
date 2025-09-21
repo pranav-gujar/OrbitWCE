@@ -422,7 +422,7 @@ const Profile = () => {
             )}
             <div className="absolute -bottom-12 left-6">
               <div className="w-36 h-36 rounded-full border-4 border-white bg-white overflow-hidden">
-                {user.role === 'community' && (user.photo || previewImage) ? (
+                {(user.photo || previewImage) ? (
                   <>
                     <img
                       src={previewImage || 
