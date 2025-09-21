@@ -58,20 +58,32 @@ const ProfileDropdown = ({ user, onLogout }) => {
       >
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center overflow-hidden ring-2 ring-white  transition-all duration-200">
           {user?.profilePicture || user?.photo ? (
-            <img 
-              src={user.profilePicture ? 
-                (user.profilePicture.startsWith('http') ? user.profilePicture : `${import.meta.env.VITE_API_URL}${user.profilePicture}`) : 
-                (user.photo && user.photo.startsWith('http') ? user.photo : `${import.meta.env.VITE_API_URL}${user.photo}`)
-              } 
-              alt={user.name || 'Profile'} 
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                console.error('Image failed to load:', e.target.src);
-                e.target.onerror = null;
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'block';
-              }}
-            />
+            <>
+              <img 
+                src={
+                  (user.profilePicture || user.photo).startsWith('http') || 
+                  (user.profilePicture || user.photo).startsWith('blob:') ? 
+                    (user.profilePicture || user.photo) : 
+                    `${import.meta.env.VITE_API_URL}/uploads/${(user.profilePicture || user.photo).replace(/^\/uploads\//, '')}`
+                } 
+                alt={user.name || 'Profile'} 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.error('Image failed to load:', e.target.src);
+                  e.target.onerror = null;
+                  e.target.style.display = 'none';
+                  const fallback = e.target.nextElementSibling;
+                  if (fallback) {
+                    fallback.style.display = 'flex';
+                  }
+                }}
+              />
+              <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 items-center justify-center hidden">
+                <span className="text-white text-xl font-bold">
+                  {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                </span>
+              </div>
+            </>
           ) : (
             <FaUserCircle className="w-8 h-8 text-white" />
           )}
