@@ -206,9 +206,18 @@ exports.deleteUser = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { photo, bio, motto, website, teamMembers } = req.body;
+        const { 
+            name,
+            bio, 
+            motto, 
+            website, 
+            teamMembers,
+            photo,
+            phone,
+            socialLinks
+        } = req.body;
         
-        // Only allow community users to update these fields
+        // Find the user
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ 
@@ -223,28 +232,34 @@ exports.updateProfile = async (req, res) => {
                 message: 'Only community users can update these profile fields' 
             });
         }
-        
-        // Update the user profile
-        user.photo = photo || user.photo;
-        user.bio = bio || user.bio;
-        user.motto = motto || user.motto;
-        user.website = website || user.website;
 
-        // Safely handle teamMembers
+        // Update basic profile fields
+        if (name) user.name = name;
+        if (bio !== undefined) user.bio = bio;
+        if (motto !== undefined) user.motto = motto;
+        if (website !== undefined) user.website = website;
+        if (photo !== undefined) user.photo = photo;
+        if (phone !== undefined) user.phone = phone;
+
+        // Handle social links
+        if (socialLinks && typeof socialLinks === 'object') {
+            user.socialLinks = {
+                ...user.socialLinks,
+                ...socialLinks
+            };
+        }
+
+        // Handle team members
         if (teamMembers && Array.isArray(teamMembers)) {
             user.teamMembers = teamMembers.map(member => {
-                // Create a new object without _id if it's not a valid ObjectId
                 const newMember = { ...member };
                 if (member._id) {
                     if (mongoose.Types.ObjectId.isValid(member._id)) {
-                        // If it's a valid ObjectId string, convert it
                         newMember._id = new mongoose.Types.ObjectId(member._id);
                     } else if (typeof member._id === 'string') {
-                        // If it's a string but not a valid ObjectId, generate a new one
                         newMember._id = new mongoose.Types.ObjectId();
                     }
                 } else {
-                    // If no _id is provided, generate a new one
                     newMember._id = new mongoose.Types.ObjectId();
                 }
                 return newMember;
@@ -253,13 +268,14 @@ exports.updateProfile = async (req, res) => {
 
         await user.save();
 
-        const updatedUser = await User.findById(userId).select('-password -__v');
+        // Get updated user data without sensitive information
+        const updatedUser = await User.findById(userId)
+            .select('-password -__v -resetPasswordToken -resetPasswordExpires -verificationToken');
         
         // Emit socket event for real-time updates
         const io = req.app.get('io');
         if (io) {
             console.log('Emitting profile_updated event for user:', userId);
-            // Emit to everyone
             io.emit('profile_updated', updatedUser);
         }
 

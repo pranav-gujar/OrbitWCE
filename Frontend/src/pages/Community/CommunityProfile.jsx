@@ -223,22 +223,23 @@ const CommunityProfile = () => {
               <div className="relative group mb-4 md:mb-0 md:mr-8">
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
                   {communityUser?.photo ? (
-                    <img
-                      src={communityUser.photo.startsWith('http') ? communityUser.photo : `${import.meta.env.VITE_API_URL}${communityUser.photo}`}
-                      alt={communityUser.name || 'Profile'}
+                    <img 
+                      src={communityUser.photo.startsWith('http') ? communityUser.photo : `${import.meta.env.VITE_API_URL}${communityUser.photo}`} 
+                      alt={communityUser.name || 'Profile'} 
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        // Fallback to showing the user's initial if image fails to load
+                        console.error('Image failed to load:', e.target.src);
+                        e.target.onerror = null;
                         e.target.style.display = 'none';
                         const initial = document.createElement('div');
                         initial.className = 'w-full h-full flex items-center justify-center';
-                        initial.textContent = communityUser.name?.charAt(0).toUpperCase() || 'C';
+                        initial.innerHTML = `<span class="text-white text-4xl">${communityUser.name?.charAt(0).toUpperCase() || 'C'}</span>`;
                         e.target.parentNode.appendChild(initial);
                       }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      {communityUser.name?.charAt(0).toUpperCase() || 'C'}
+                      <span className="text-white text-4xl">{communityUser.name?.charAt(0).toUpperCase() || 'C'}</span>
                     </div>
                   )}
                 </div>
