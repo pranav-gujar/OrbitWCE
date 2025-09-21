@@ -422,14 +422,14 @@ const Profile = () => {
             )}
             <div className="absolute -bottom-12 left-6">
               <div className="w-36 h-36 rounded-full border-4 border-white bg-white overflow-hidden">
-                {user.photo || previewImage ? (
+                {user.role === 'community' && (user.photo || previewImage) ? (
                   <>
                     <img
                       src={previewImage || 
                         (user.photo ? 
                           (user.photo.startsWith('http') || user.photo.startsWith('blob:') ? 
                             user.photo : 
-                            `${import.meta.env.VITE_API_URL}${user.photo.startsWith('/') ? '' : '/'}${user.photo.replace(/^\//, '')}`
+                            `${import.meta.env.VITE_API_URL}/uploads/${user.photo.replace(/^[\/\\]?uploads[\/\\]?/, '')}`
                           ) : ''
                         )
                       }
@@ -439,16 +439,15 @@ const Profile = () => {
                         console.error('Image failed to load:', e.target.src);
                         e.target.onerror = null;
                         e.target.style.display = 'none';
-                        // Show the fallback content
                         const fallback = e.target.nextElementSibling;
                         if (fallback) {
                           fallback.style.display = 'flex';
                         }
                       }}
                     />
-                    <div className="w-full h-full bg-gray-200 items-center justify-center hidden">
-                      <span className="text-3xl font-bold text-gray-500">
-                        {(user.name && user.name.charAt(0).toUpperCase()) || "U"}
+                    <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 items-center justify-center hidden">
+                      <span className="text-white text-3xl font-bold">
+                        {user.name?.charAt(0)?.toUpperCase() || 'U'}
                       </span>
                     </div>
                   </>
