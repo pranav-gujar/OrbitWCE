@@ -22,6 +22,7 @@ body {
   flex-direction: column;
 }
 
+/* Space Background with Stars */
 body::before {
   content: '';
   position: fixed;
@@ -29,14 +30,77 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/Background.jpg');
- 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  transform: rotate(5deg);
-  z-index: -1; /* Keep background behind everything */
-  animation: rotateBg 20s infinite alternate ease-in-out;
+  background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  z-index: -1;
+  overflow: hidden;
+}
+
+/* Stars */
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.stars::before,
+.stars::after,
+.stars span {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background: #FFF;
+  animation: twinkle 5s infinite ease-in-out;
+}
+
+/* Small stars */
+.stars::before {
+  width: 1px;
+  height: 1px;
+  box-shadow: 
+    5vw 100px #FFF, 10vw 200px #FFF, 15vw 50px #FFF, 20vw 150px #FFF, 25vw 250px #FFF,
+    30vw 75px #FFF, 35vw 175px #FFF, 40vw 300px #FFF, 45vw 225px #FFF, 50vw 100px #FFF,
+    55vw 350px #FFF, 60vw 125px #FFF, 65vw 275px #FFF, 70vw 25px #FFF, 75vw 325px #FFF,
+    80vw 200px #FFF, 85vw 375px #FFF, 90vw 150px #FFF, 95vw 400px #FFF, 100vw 75px #FFF,
+    15vw 450px #FFF, 25vw 500px #FFF, 35vw 225px #FFF, 45vw 550px #FFF, 55vw 300px #FFF,
+    65vw 600px #FFF, 75vw 175px #FFF, 85vw 650px #FFF, 95vw 250px #FFF, 5vw 700px #FFF,
+    15vw 350px #FFF, 25vw 750px #FFF, 35vw 200px #FFF, 45vw 800px #FFF, 55vw 150px #FFF,
+    65vw 850px #FFF, 75vw 275px #FFF, 85vw 900px #FFF, 95vw 125px #FFF, 5vw 950px #FFF,
+    15vw 400px #FFF, 25vw 1000px #FFF, 35vw 225px #FFF, 45vw 1050px #FFF, 55vw 175px #FFF,
+    65vw 1100px #FFF, 75vw 250px #FFF, 85vw 1150px #FFF, 95vw 150px #FFF, 5vw 1200px #FFF;
+  animation: animStar 100s linear infinite;
+}
+
+/* Medium stars */
+.stars::after {
+  width: 2px;
+  height: 2px;
+  box-shadow: 
+    3vw 120px #FFF, 8vw 220px #FFF, 13vw 70px #FFF, 18vw 170px #FFF, 23vw 270px #FFF,
+    28vw 95px #FFF, 33vw 195px #FFF, 38vw 320px #FFF, 43vw 245px #FFF, 48vw 120px #FFF,
+    53vw 370px #FFF, 58vw 145px #FFF, 63vw 295px #FFF, 68vw 45px #FFF, 73vw 345px #FFF,
+    78vw 220px #FFF, 83vw 395px #FFF, 88vw 170px #FFF, 93vw 420px #FFF, 98vw 95px #FFF,
+    13vw 470px #FFF, 23vw 520px #FFF, 33vw 245px #FFF, 43vw 570px #FFF, 53vw 320px #FFF,
+    63vw 620px #FFF, 73vw 195px #FFF, 83vw 670px #FFF, 93vw 270px #FFF, 3vw 720px #FFF,
+    13vw 370px #FFF, 23vw 770px #FFF, 33vw 220px #FFF, 43vw 820px #FFF, 53vw 170px #FFF,
+    63vw 870px #FFF, 73vw 295px #FFF, 83vw 920px #FFF, 93vw 145px #FFF, 3vw 970px #FFF;
+  animation: animStar 150s linear infinite;
+}
+
+/* Twinkling effect */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+@keyframes animStar {
+  from { transform: translateY(0px); }
+  to { transform: translateY(-1000px); }
 }
 
 @keyframes rotateBg {

@@ -86,9 +86,15 @@ const ResetPasswordWrapper = () => {
   return <ResetPassword token={token} />;
 };
 
+// Stars background component
+const StarsBackground = () => (
+  <div className="stars"></div>
+);
+
 function App() {
   return (
     <BrowserRouter>
+      <StarsBackground />
       <Navbar />
       <ToastContainer 
         position="top-right"
