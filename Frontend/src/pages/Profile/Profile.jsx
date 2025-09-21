@@ -420,59 +420,36 @@ const Profile = () => {
                 <FaEdit className="text-blue-600" />
               </button>
             )}
-            <div className="absolute -bottom-12 left-6">
-              <div className="w-36 h-36 rounded-full border-4 border-white bg-white overflow-hidden">
-                {(user.photo || previewImage) ? (
-                  <>
-                    <img
-                      src={previewImage || 
-                        (user.photo ? 
-                          (user.photo.startsWith('http') || user.photo.startsWith('blob:') ? 
-                            user.photo : 
-                            `${import.meta.env.VITE_API_URL}/uploads/${user.photo.replace(/^[\/\\]?uploads[\/\\]?/, '')}`
-                          ) : ''
-                        )
-                      }
-                      alt={user.name || "User"}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        console.error('Image failed to load:', e.target.src);
-                        e.target.onerror = null;
-                        e.target.style.display = 'none';
-                        const fallback = e.target.nextElementSibling;
-                        if (fallback) {
-                          fallback.style.display = 'flex';
-                        }
-                      }}
-                    />
-                    <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 items-center justify-center hidden">
-                      <span className="text-white text-3xl font-bold">
-                        {user.name?.charAt(0)?.toUpperCase() || 'U'}
-                      </span>
-                    </div>
-                  </>
-                ) : (
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-3xl font-bold text-gray-500">
-                      {(user.name && user.name.charAt(0).toUpperCase()) || "U"}
+            {user.role === "community" ? (
+              isEditing && (
+                <div className="absolute -bottom-12 left-6">
+                  <div className="w-36 h-36 rounded-full border-4 border-white bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center relative">
+                    <span className="text-white text-5xl font-bold">
+                      {user.name?.charAt(0)?.toUpperCase() || 'U'}
                     </span>
+                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-full">
+                      <label className="cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handlePhotoChange}
+                        />
+                        <FaEdit className="text-white text-xl" />
+                      </label>
+                    </div>
                   </div>
-                )}
-                {isEditing && user.role === "community" && (
-                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <label className="cursor-pointer">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handlePhotoChange}
-                      />
-                      <FaEdit className="text-white text-xl" />
-                    </label>
-                  </div>
-                )}
+                </div>
+              )
+            ) : (
+              <div className="absolute -bottom-12 left-6">
+                <div className="w-36 h-36 rounded-full border-4 border-white bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <span className="text-white text-5xl font-bold">
+                    {user.name?.charAt(0)?.toUpperCase() || 'U'}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {!isEditing ? (
