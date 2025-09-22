@@ -91,6 +91,8 @@ const Notifications = () => {
         return <FaCheck className="text-green-500" />;
       case 'event_rejected':
         return <FaTimes className="text-red-500" />;
+      case 'event_deleted':
+        return <FaTimes className="text-red-500" />;
       case 'new_event':
         return <FaCalendarAlt className="text-blue-500" />;
       default:

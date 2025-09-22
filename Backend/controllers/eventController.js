@@ -495,7 +495,22 @@ exports.approveEventDeletion = async (req, res) => {
         
         console.log('✅ Socket events emitted for event deletion');
 
-        // TODO: Send notification to event creator about approved deletion
+        // Create a notification for the event creator
+        await Notification.create({
+            recipient: creatorId,
+            message: `Your event "${event.title}" has been deleted successfully.`,
+            type: 'event_deleted',
+            relatedEvent: eventId,
+            isRead: false
+        });
+
+        // Emit socket event to notify the user
+        io.to(`user_${creatorId}`).emit('new_notification', {
+            message: `Your event "${event.title}" has been deleted successfully.`,
+            type: 'event_deleted',
+            eventId: eventId,
+            timestamp: new Date()
+        });
 
         res.status(200).json({
             success: true,

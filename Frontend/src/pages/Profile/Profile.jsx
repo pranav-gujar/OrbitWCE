@@ -663,20 +663,7 @@ const Profile = () => {
             className="border border-white/10 rounded-xl p-4 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 text-gray-100"
           >
             <div className="flex items-start space-x-4">
-              {/* Member Photo */}
-              <div className="flex-shrink-0">
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200/20 border-2 border-white/10 flex items-center justify-center">
-                  {member.photo ? (
-                    <img 
-                      src={member.photo} 
-                      alt={member.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <FaUser className="text-gray-400 text-2xl" />
-                  )}
-                </div>
-              </div>
+             
 
               {/* Member Info */}
               <div className="flex-1">

@@ -12,7 +12,7 @@ const NotificationSchema = new Schema({
     },
     type: {
         type: String,
-        enum: ['event_approved', 'event_rejected', 'new_event'],
+        enum: ['event_approved', 'event_rejected', 'new_event', 'event_deleted'],
         required: true
     },
     relatedEvent: {
