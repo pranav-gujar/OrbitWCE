@@ -287,7 +287,7 @@ const Profile = () => {
   const handleTeamMemberChange = (e) => {
     const { name, value } = e.target;
     
-    // Handle social links separately
+    // Handle social links separately since they're nested
     if (['linkedin', 'github', 'twitter', 'website'].includes(name)) {
       setNewTeamMember(prev => ({
         ...prev,
@@ -975,7 +975,7 @@ const Profile = () => {
                               <input
                                 type="text"
                                 name="linkedin"
-                                value={newTeamMember.linkedin}
+                                value={newTeamMember.socialLinks?.linkedin || ''}
                                 onChange={handleTeamMemberChange}
                                 placeholder="LinkedIn Link"
                                 className="w-full px-3 py-2 focus:outline-none text-gray-400"
@@ -990,7 +990,7 @@ const Profile = () => {
                               <input
                                 type="text"
                                 name="github"
-                                value={newTeamMember.github}
+                                value={newTeamMember.socialLinks?.github || ''}
                                 onChange={handleTeamMemberChange}
                                 placeholder="GitHub Link"
                                 className="w-full px-3 py-2 focus:outline-none text-gray-400"
@@ -1008,7 +1008,7 @@ const Profile = () => {
                               <input
                                 type="text"
                                 name="twitter"
-                                value={newTeamMember.twitter}
+                                value={newTeamMember.socialLinks?.twitter || ''}
                                 onChange={handleTeamMemberChange}
                                 placeholder="Twitter Link"
                                 className="w-full px-3 py-2 focus:outline-none text-gray-400"
@@ -1023,7 +1023,7 @@ const Profile = () => {
                               <input
                                 type="url"
                                 name="website"
-                                value={newTeamMember.website}
+                                value={newTeamMember.socialLinks?.website || ''}
                                 onChange={handleTeamMemberChange}
                                 placeholder="Personal website"
                                 className="w-full px-3 py-2 focus:outline-none text-gray-400"
