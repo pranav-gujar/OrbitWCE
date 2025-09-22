@@ -20,9 +20,44 @@ const roles = [
 ];
 
 const TeamMemberSchema = new Schema({
-    name: String,
-    role: String,
-    bio: String
+    name: {
+        type: String,
+        required: true
+    },
+    role: {
+        type: String,
+        required: true
+    },
+    bio: {
+        type: String,
+        default: ''
+    },
+    photo: {
+        type: String,
+        default: ''
+    },
+    socialLinks: {
+        linkedin: {
+            type: String,
+            default: ''
+        },
+        github: {
+            type: String,
+            default: ''
+        },
+        twitter: {
+            type: String,
+            default: ''
+        },
+        website: {
+            type: String,
+            default: ''
+        }
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 }, { _id: true });
 
 const UserSchema = new Schema({

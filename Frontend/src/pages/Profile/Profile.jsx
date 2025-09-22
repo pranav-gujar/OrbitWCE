@@ -13,6 +13,10 @@ import {
   FaBell,
   FaUserCog,
   FaSignOutAlt,
+  FaUser,
+  FaLinkedin,
+  FaGithub,
+  FaTwitter,
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { showError, showSuccess } from "../../utils/toast";
@@ -136,7 +140,13 @@ const Profile = () => {
     name: "",
     role: "",
     bio: "",
+    photo: "",
+    linkedin: "",
+    github: "",
+    twitter: "",
+    website: ""
   });
+  const [teamMemberPhoto, setTeamMemberPhoto] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [newEventNotifications, setNewEventNotifications] = useState([]);
 
@@ -151,6 +161,8 @@ const Profile = () => {
 
     // Only set form data if we have user data
     if (user) {
+      console.log('User data:', user);
+      console.log('Team members:', user.teamMembers);
       setFormData({
         photo: user.photo || "",
         bio: user.bio || "",
@@ -274,36 +286,130 @@ const Profile = () => {
 
   const handleTeamMemberChange = (e) => {
     const { name, value } = e.target;
-    setNewTeamMember((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    
+    // Handle social links separately
+    if (['linkedin', 'github', 'twitter', 'website'].includes(name)) {
+      setNewTeamMember(prev => ({
+        ...prev,
+        socialLinks: {
+          ...(prev.socialLinks || {}),
+          [name]: value
+        }
+      }));
+    } else {
+      // Handle regular fields
+      setNewTeamMember(prev => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleTeamMemberPhotoChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      showError('File size should be less than 5MB');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to upload photo');
+      }
+
+      // Set the preview image
+      setTeamMemberPhoto(data.url);
+      
+      // Update the new team member data with the photo URL
+      setNewTeamMember(prev => ({
+        ...prev,
+        photo: data.url
+      }));
+    } catch (error) {
+      console.error('Error uploading team member photo:', error);
+      showError('Failed to upload photo. Please try again.');
+    }
   };
 
   const handleAddTeamMember = async () => {
-    if (newTeamMember.name.trim() !== "") {
-      const updatedTeamMembers = [
-        ...formData.teamMembers,
-        { ...newTeamMember, _id: Date.now().toString() }
-      ];
+    if (!newTeamMember.name?.trim() || !newTeamMember.role?.trim()) {
+      showError('Name and Role are required fields');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
       
-      try {
-        const response = await updateUserProfile({ teamMembers: updatedTeamMembers });
-        if (response.success) {
-          setFormData(prev => ({
-            ...prev,
-            teamMembers: updatedTeamMembers
-          }));
-          setNewTeamMember({ name: "", role: "", bio: "" });
-          showSuccess('Team member added successfully!');
-        } else {
-          showError(response.error || 'Failed to add team member');
-        }
-      } catch (error) {
-        console.error('Error adding team member:', error);
-        showError('An error occurred while adding team member');
+      // Prepare the team member data with proper structure
+      const teamMemberData = {
+        name: newTeamMember.name.trim(),
+        role: newTeamMember.role.trim(),
+        bio: newTeamMember.bio?.trim() || '',
+        photo: teamMemberPhoto || '',
+        linkedin: newTeamMember.socialLinks?.linkedin?.trim() || '',
+        github: newTeamMember.socialLinks?.github?.trim() || '',
+        twitter: newTeamMember.socialLinks?.twitter?.trim() || '',
+        website: newTeamMember.socialLinks?.website?.trim() || ''
+      };
+
+      console.log('Sending team member data:', teamMemberData);
+      
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/team-members`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(teamMemberData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to add team member');
       }
-      setNewTeamMember({ name: "", role: "", bio: "" });
+
+      // If successful, update the form data with the new team member
+      setFormData(prev => ({
+        ...prev,
+        teamMembers: [...prev.teamMembers, data.data]
+      }));
+
+      // Reset the form
+      setNewTeamMember({
+        name: "",
+        role: "",
+        bio: "",
+        photo: "",
+        socialLinks: {
+          linkedin: "",
+          github: "",
+          twitter: "",
+          website: ""
+        }
+      });
+      setTeamMemberPhoto(null);
+      
+      showSuccess('Team member added successfully!');
+    } catch (error) {
+      console.error('Error adding team member:', error);
+      showError(error.message || 'Failed to add team member');
     }
   };
 
@@ -548,17 +654,106 @@ const Profile = () => {
 
   {/* Team Members */}
   {user.teamMembers && user.teamMembers.length > 0 && (
-    <div className="flex-1 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 p-4 rounded-xl border-t-4 border-b-4 border-indigo-500 text-gray-100">
-      <h2 className="text-lg font-semibold text-gray-900 mb-3">Team Members</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="flex-1 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 p-6 rounded-xl border-t-4 border-b-4 border-indigo-500">
+      <h2 className="text-xl font-semibold text-gray-100 mb-6">Team Members</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {user.teamMembers.map((member, index) => (
           <div
             key={member._id || index}
-            className="border rounded-lg p-3  text-gray-200"
+            className="border border-white/10 rounded-xl p-4 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 text-gray-100"
           >
-            <h3 className="font-medium">{member.name}</h3>
-            <p className="text-sm text-gray-500">{member.role}</p>
-            {member.bio && <p className="text-sm mt-1">{member.bio}</p>}
+            <div className="flex items-start space-x-4">
+              {/* Member Photo */}
+              <div className="flex-shrink-0">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200/20 border-2 border-white/10 flex items-center justify-center">
+                  {member.photo ? (
+                    <img 
+                      src={member.photo} 
+                      alt={member.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <FaUser className="text-gray-400 text-2xl" />
+                  )}
+                </div>
+              </div>
+
+              {/* Member Info */}
+              <div className="flex-1">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-medium text-gray-100">{member.name}</h3>
+                    <p className="text-sm text-indigo-300">{member.role}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTeamMember(member._id)}
+                    className="text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    <FaTrash size={14} />
+                  </button>
+                </div>
+                
+                {member.bio && (
+                  <p className="text-sm text-gray-300 mt-2">{member.bio}</p>
+                )}
+
+                {/* Social Links */}
+                {(member.socialLinks?.linkedin || 
+                  member.socialLinks?.github || 
+                  member.socialLinks?.twitter || 
+                  member.socialLinks?.website) && (
+                  <div className="flex space-x-3 mt-3 pt-3 border-t border-white/10">
+                    {member.socialLinks?.linkedin && (
+                      <a 
+                        href={`${member.socialLinks.linkedin}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 hover:text-blue-300 transition-colors"
+                        title="LinkedIn"
+                      >
+                        <FaLinkedin size={16} />
+                      </a>
+                    )}
+                    {member.socialLinks?.github && (
+                      <a 
+                        href={`${member.socialLinks.github}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-300 hover:text-white transition-colors"
+                        title="GitHub"
+                      >
+                        <FaGithub size={16} />
+                      </a>
+                    )}
+                    {member.socialLinks?.twitter && (
+                      <a 
+                        href={`${member.socialLinks.twitter}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 hover:text-blue-300 transition-colors"
+                        title="Twitter"
+                      >
+                        <FaTwitter size={16} />
+                      </a>
+                    )}
+                    {member.socialLinks?.website && (
+                      <a 
+                        href={member.socialLinks.website.startsWith('http') ? 
+                              member.socialLinks.website : 
+                              `${member.socialLinks.website}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-purple-300 hover:text-purple-200 transition-colors"
+                        title="Website"
+                      >
+                        <FaGlobe size={16} />
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -645,14 +840,74 @@ const Profile = () => {
                     {formData.teamMembers.map((member, index) => (
                       <div
                         key={member._id || index}
-                        className="flex items-start border rounded-md p-3 text-gray-400"
+                        className="flex items-start space-x-4 border rounded-md p-3 text-gray-400"
                       >
+                        {/* Member Photo */}
+                        <div className="flex-shrink-0">
+                          <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                            {member.photo ? (
+                              <img 
+                                src={member.photo} 
+                                alt={member.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <FaUser className="text-gray-400 text-2xl" />
+                            )}
+                          </div>
+                        </div>
+                        
+                        {/* Member Details */}
                         <div className="flex-grow">
                           <p className="font-medium">{member.name}</p>
                           <p className="text-sm text-gray-500">{member.role}</p>
                           {member.bio && (
-                            <p className="text-sm mt-1">{member.bio}</p>
+                            <p className="text-sm mt-1 mb-2">{member.bio}</p>
                           )}
+                          
+                          {/* Social Links */}
+                          <div className="flex space-x-3 mt-2">
+                            {member.socialLinks?.linkedin && (
+                              <a 
+                                href={`https://linkedin.com/in/${member.socialLinks.linkedin}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-500 hover:text-blue-600"
+                              >
+                                <FaLinkedin size={18} />
+                              </a>
+                            )}
+                            {member.socialLinks?.github && (
+                              <a 
+                                href={`https://github.com/${member.socialLinks.github}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-gray-700 hover:text-gray-900"
+                              >
+                                <FaGithub size={18} />
+                              </a>
+                            )}
+                            {member.socialLinks?.twitter && (
+                              <a 
+                                href={`https://twitter.com/${member.socialLinks.twitter}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-400 hover:text-blue-500"
+                              >
+                                <FaTwitter size={18} />
+                              </a>
+                            )}
+                            {member.socialLinks?.website && (
+                              <a 
+                                href={member.socialLinks.website.startsWith('http') ? member.socialLinks.website : `https://${member.socialLinks.website}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-gray-500 hover:text-gray-700"
+                              >
+                                <FaGlobe size={18} />
+                              </a>
+                            )}
+                          </div>
                         </div>
                         <button
                           type="button"
@@ -668,37 +923,150 @@ const Profile = () => {
                       <h4 className="text-sm font-medium mb-2">
                         Add Team Member
                       </h4>
-                      <div className="space-y-2">
-                        <input
-                          type="text"
-                          name="name"
-                          value={newTeamMember.name}
-                          onChange={handleTeamMemberChange}
-                          placeholder="Name"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-400"
-                        />
-                        <input
-                          type="text"
-                          name="role"
-                          value={newTeamMember.role}
-                          onChange={handleTeamMemberChange}
-                          placeholder="Role"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                        <textarea
-                          name="bio"
-                          value={newTeamMember.bio}
-                          onChange={handleTeamMemberChange}
-                          placeholder="Bio"
-                          rows="2"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        ></textarea>
+                      <div className="space-y-3">
+                        {/* Photo Upload */}
+                        <div className="flex items-center space-x-4">
+                          <div className="relative group">
+                            <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                              {teamMemberPhoto ? (
+                                <img 
+                                  src={teamMemberPhoto} 
+                                  alt="Team Member"
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <FaUser className="text-gray-400 text-2xl" />
+                              )}
+                            </div>
+                            <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-1 rounded-full cursor-pointer hover:bg-blue-700">
+                              <FaPlus size={12} />
+                              <input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleTeamMemberPhotoChange}
+                              />
+                            </label>
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-xs text-gray-400 mb-1">Upload a photo (optional)</p>
+                            <p className="text-xs text-gray-500">JPG, PNG, max 5MB</p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="col-span-2 sm:col-span-1">
+                            <input
+                              type="text"
+                              name="name"
+                              value={newTeamMember.name}
+                              onChange={handleTeamMemberChange}
+                              placeholder="Full Name *"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-400"
+                              
+                            />
+                          </div>
+                          <div className="col-span-2 sm:col-span-1">
+                            <input
+                              type="text"
+                              name="role"
+                              value={newTeamMember.role}
+                              onChange={handleTeamMemberChange}
+                              placeholder="Role/Position *"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                              
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="col-span-2 sm:col-span-1">
+                            <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
+                              <span className="px-3 text-gray-400  h-full flex items-center">
+                                <FaLinkedin className="text-blue-600" />
+                              </span>
+                              <input
+                                type="text"
+                                name="linkedin"
+                                value={newTeamMember.linkedin}
+                                onChange={handleTeamMemberChange}
+                                placeholder="LinkedIn Link"
+                                className="w-full px-3 py-2 focus:outline-none text-gray-400"
+                              />
+                            </div>
+                          </div>
+                          <div className="col-span-2 sm:col-span-1">
+                            <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
+                              <span className="px-3 text-gray-400  h-full flex items-center">
+                                <FaGithub />
+                              </span>
+                              <input
+                                type="text"
+                                name="github"
+                                value={newTeamMember.github}
+                                onChange={handleTeamMemberChange}
+                                placeholder="GitHub Link"
+                                className="w-full px-3 py-2 focus:outline-none text-gray-400"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="col-span-2 sm:col-span-1">
+                            <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
+                              <span className="px-3 text-gray-400  h-full flex items-center">
+                                <FaTwitter className="text-blue-400" />
+                              </span>
+                              <input
+                                type="text"
+                                name="twitter"
+                                value={newTeamMember.twitter}
+                                onChange={handleTeamMemberChange}
+                                placeholder="Twitter Link"
+                                className="w-full px-3 py-2 focus:outline-none text-gray-400"
+                              />
+                            </div>
+                          </div>
+                          <div className="col-span-2 sm:col-span-1">
+                            <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
+                              <span className="px-3 text-gray-400  h-full flex items-center">
+                                <FaGlobe className="text-gray-600" />
+                              </span>
+                              <input
+                                type="url"
+                                name="website"
+                                value={newTeamMember.website}
+                                onChange={handleTeamMemberChange}
+                                placeholder="Personal website"
+                                className="w-full px-3 py-2 focus:outline-none text-gray-400"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <textarea
+                            name="bio"
+                            value={newTeamMember.bio}
+                            onChange={handleTeamMemberChange}
+                            placeholder="Short bio (optional)"
+                            rows="2"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-400"
+                          ></textarea>
+                        </div>
+
                         <button
                           type="button"
                           onClick={handleAddTeamMember}
-                          className="flex items-center justify-center w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          disabled={!newTeamMember.name.trim() || !newTeamMember.role.trim()}
+                          className={`flex items-center justify-center w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                            !newTeamMember.name.trim() || !newTeamMember.role.trim()
+                              ? 'bg-gray-400 cursor-not-allowed'
+                              : 'bg-blue-600 hover:bg-blue-700 text-white'
+                          }`}
                         >
-                          <FaPlus className="mr-2" /> Add Member
+                          <FaPlus className="mr-2" /> Add Team Member
                         </button>
                       </div>
                     </div>

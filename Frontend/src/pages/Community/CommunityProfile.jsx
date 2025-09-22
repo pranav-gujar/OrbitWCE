@@ -34,9 +34,10 @@ const CommunityProfile = () => {
     // If we're here, both the main and fallback images failed to load
     const container = e.target.parentNode;
     if (container) {
+      const initial = communityUser?.name?.charAt(0)?.toUpperCase() || 'C';
       container.innerHTML = `
         <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white text-4xl font-bold">
-          ${communityUser?.name?.charAt(0)?.toUpperCase() || 'C'}
+          ${initial}
         </div>
       `;
     }
@@ -47,6 +48,9 @@ const CommunityProfile = () => {
   const [events, setEvents] = useState([]);
   const [activeTab, setActiveTab] = useState('about');
   const [isUploading, setIsUploading] = useState(false);
+  
+  // Initialize team members array to prevent undefined errors
+  const teamMembers = communityUser?.teamMembers || [];
 
   useEffect(() => {
     fetchCommunityUser();
@@ -408,22 +412,114 @@ const CommunityProfile = () => {
               transition={{ duration: 0.5 }}
               className="bg-gray-800 rounded-lg shadow-md p-6"
             >
-              <h2 className="text-2xl font-bold text-white mb-4">Team Members</h2>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">Team Members</h2>
+                <span className="text-sm text-gray-400 bg-gray-700 px-3 py-1 rounded-full">
+                  {teamMembers.length} {teamMembers.length === 1 ? 'Member' : 'Members'}
+                </span>
+              </div>
               
-              {communityUser.teamMembers && communityUser.teamMembers.length > 0 ? (
+              {teamMembers.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {communityUser.teamMembers.map((member, index) => (
-                    <div key={index} className="bg-gray-700 rounded-lg p-4">
-                      <div className="flex items-center mb-3">
-                        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                          {member.name?.charAt(0).toUpperCase() || 'M'}
+                  {teamMembers.map((member, index) => (
+                    <div 
+                      key={member._id || index} 
+                      className="border border-white/10 rounded-xl p-4 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 text-gray-100"
+                    >
+                      <div className="flex items-start space-x-4">
+                        {/* Member Photo */}
+                        <div className="flex-shrink-0">
+                          <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200/20 border-2 border-white/10 flex items-center justify-center">
+                            {member.photo ? (
+                              <img 
+                                src={member.photo.startsWith('http') ? member.photo : `${import.meta.env.VITE_API_URL}/uploads/${member.photo.replace(/^[\/\\]?uploads[\/\\]?/, '')}`} 
+                                alt={member.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.style.display = 'none';
+                                  const fallback = e.target.parentNode.querySelector('.member-initial');
+                                  if (fallback) fallback.style.display = 'flex';
+                                }}
+                              />
+                            ) : (
+                              <FaUser className="text-gray-400 text-2xl" />
+                            )}
+                            <div className="member-initial w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 text-white text-2xl font-bold items-center justify-center hidden">
+                              {member.name?.charAt(0).toUpperCase() || 'M'}
+                            </div>
+                          </div>
                         </div>
-                        <div className="ml-3">
-                          <h3 className="text-white font-medium">{member.name}</h3>
-                          <p className="text-gray-400 text-sm">{member.role}</p>
+
+                        {/* Member Info */}
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-medium text-gray-100">{member.name}</h3>
+                              <p className="text-sm text-indigo-300">{member.role}</p>
+                            </div>
+                          </div>
+                          
+                          {member.bio && (
+                            <p className="text-sm text-gray-300 mt-2">{member.bio}</p>
+                          )}
+
+                          {/* Social Links */}
+                          {(member.socialLinks?.linkedin || 
+                            member.socialLinks?.github || 
+                            member.socialLinks?.twitter || 
+                            member.socialLinks?.website) && (
+                            <div className="flex space-x-3 mt-3 pt-3 border-t border-white/10">
+                              {member.socialLinks?.linkedin && (
+                                <a 
+                                  href={`${member.socialLinks.linkedin}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-400 hover:text-blue-300 transition-colors"
+                                  title="LinkedIn"
+                                >
+                                  <FaLinkedin size={16} />
+                                </a>
+                              )}
+                              {member.socialLinks?.github && (
+                                <a 
+                                  href={`${member.socialLinks.github}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-gray-300 hover:text-white transition-colors"
+                                  title="GitHub"
+                                >
+                                  <FaGithub size={16} />
+                                </a>
+                              )}
+                              {member.socialLinks?.twitter && (
+                                <a 
+                                  href={`${member.socialLinks.twitter}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-400 hover:text-blue-300 transition-colors"
+                                  title="Twitter"
+                                >
+                                  <FaTwitter size={16} />
+                                </a>
+                              )}
+                              {member.socialLinks?.website && (
+                                <a 
+                                  href={member.socialLinks.website.startsWith('http') ? 
+                                        member.socialLinks.website : 
+                                        `${member.socialLinks.website}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-purple-300 hover:text-purple-200 transition-colors"
+                                  title="Website"
+                                >
+                                  <FaGlobe size={16} />
+                                </a>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
-                      {member.bio && <p className="text-gray-300 text-sm">{member.bio}</p>}
                     </div>
                   ))}
                 </div>

@@ -9,7 +9,8 @@ const {
     updateUserRole, 
     deleteUser,
     updateProfile,
-    updateUserProfile 
+    updateUserProfile,
+    addTeamMember 
 } = require('../controllers/userController');
 const { getCurrentUser } = require('../controllers/profileController');
 
@@ -44,5 +45,9 @@ router.route('/:id/role')
 
 router.route('/:id')
     .delete(deleteUser);
+
+// Team member routes - protected
+router.route('/team-members')
+    .post(protect, addTeamMember);
 
 module.exports = router;

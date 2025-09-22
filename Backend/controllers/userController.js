@@ -3,6 +3,77 @@ const User = require('../models/User');
 const { validationResult } = require('express-validator');
 const { isValidObjectId } = require('mongoose');
 
+// @desc    Add a team member to user's profile
+// @route   POST /api/users/team-members
+// @access  Private/Community
+exports.addTeamMember = async (req, res) => {
+    try {
+        const { name, role, bio, photo, linkedin, github, twitter, website } = req.body;
+        const userId = req.user.id;
+
+        console.log('Received team member data:', { name, role, bio, photo, linkedin, github, twitter, website });
+
+        // Basic validation
+        if (!name || !role) {
+            return res.status(400).json({
+                success: false,
+                message: 'Name and role are required fields'
+            });
+        }
+
+        // Find the user
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Create new team member object with all fields
+        const newTeamMember = {
+            _id: new mongoose.Types.ObjectId(),
+            name,
+            role,
+            bio: bio || '',
+            photo: photo || '',
+            socialLinks: {
+                linkedin: linkedin || '',
+                github: github || '',
+                twitter: twitter || '',
+                website: website || ''
+            },
+            createdAt: new Date()
+        };
+
+        console.log('New team member object:', newTeamMember);
+
+        // Add to team members array
+        if (!user.teamMembers) {
+            user.teamMembers = [];
+        }
+        
+        user.teamMembers.push(newTeamMember);
+        await user.save();
+
+        console.log('Team member saved successfully');
+        
+        res.status(201).json({
+            success: true,
+            message: 'Team member added successfully',
+            data: newTeamMember
+        });
+
+    } catch (error) {
+        console.error('Error adding team member:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error',
+            error: error.message
+        });
+    }
+};
+
 // @desc    Get all users (Admin only)
 // @route   GET /api/users
 // @access  Private/Admin
