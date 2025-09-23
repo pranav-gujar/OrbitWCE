@@ -654,7 +654,7 @@ const Profile = () => {
 
   {/* Team Members */}
   {user.teamMembers && user.teamMembers.length > 0 && (
-    <div className="flex-1 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 p-6 rounded-xl border-t-4 border-b-4 border-indigo-500">
+    <div className="flex-1 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 p-6 rounded-xl border-t-4 border-b-4 border-indigo-500 text-gray-100">
       <h2 className="text-xl font-semibold text-gray-100 mb-6">Team Members</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {user.teamMembers.map((member, index) => (
