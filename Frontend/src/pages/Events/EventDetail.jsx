@@ -440,8 +440,26 @@ const EventDetail = () => {
                       )}
                     </div>
                     
-                    {/* Register Now button - only shown to users with 'user' role */}
-                    
+                    {/* Register Now button for subevent */}
+                    {(!user || user.role === 'user') && (
+                      <div>
+                        {subEvent.registrations && subEvent.registrations.some(reg => reg.email === user?.email) ? (
+                          <button
+                            disabled
+                            className="w-full mt-4 bg-green-600 text-white font-medium py-2 px-4 rounded-md cursor-not-allowed"
+                          >
+                            Sub-event is registered
+                          </button>
+                        ) : (
+                          <button
+                            onClick={(e) => handleRegistrationOpen(e, subEvent)}
+                            className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                          >
+                            Register for {subEvent.name}
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

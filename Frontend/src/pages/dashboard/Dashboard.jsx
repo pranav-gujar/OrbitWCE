@@ -142,14 +142,44 @@ const Dashboard = () => {
       // Filter events with registrations that match the user's email
       if (eventsData.data && eventsData.data.length > 0) {
         eventsData.data.forEach(event => {
-          if (event.registrations && Array.isArray(event.registrations) && 
-              event.registrations.some(reg => reg.email === user.email)) {
-            registeredEvts.push({
-              id: event._id,
-              title: event.title,
-              date: new Date(event.date).toLocaleDateString(),
-              status: 'Registered'
-            });
+          // Check main event registrations
+          if (event.registrations && Array.isArray(event.registrations)) {
+            const userRegistrations = event.registrations.filter(reg => reg.email === user.email);
+            
+            // Add main event registration if exists
+            if (userRegistrations.length > 0) {
+              registeredEvts.push({
+                id: event._id,
+                title: event.title,
+                date: new Date(event.date).toLocaleDateString(),
+                status: 'Registered',
+                type: 'event',
+                eventId: event._id
+              });
+            }
+            
+            // Check sub-event registrations
+            if (event.subEvents && Array.isArray(event.subEvents)) {
+              event.subEvents.forEach(subEvent => {
+                if (subEvent.registrations && Array.isArray(subEvent.registrations)) {
+                  const subEventUserRegistrations = subEvent.registrations.filter(
+                    reg => reg.email === user.email
+                  );
+                  
+                  if (subEventUserRegistrations.length > 0) {
+                    registeredEvts.push({
+                      id: `${event._id}-${subEvent._id}`,
+                      title: `${event.title} - ${subEvent.name}`,
+                      date: subEvent.date ? new Date(subEvent.date).toLocaleDateString() : 'Date not specified',
+                      status: 'Registered',
+                      type: 'subevent',
+                      eventId: event._id,
+                      subEventId: subEvent._id
+                    });
+                  }
+                }
+              });
+            }
           }
         });
       }
@@ -615,7 +645,7 @@ const Dashboard = () => {
   <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 p-4 rounded-xl mb-6 border-l-4 border-r-4 border-indigo-500 text-gray-100">
     <h4 className="text-xl font-semibold text-gray-900 mb-4 flex items-center border-b pb-2">
       <FaRegCalendarCheck className="mr-2 text-blue-600" />
-      My Registered Events
+      My Registered Events & Sub-Events
     </h4>
     {registeredEvents.length > 0 ? (
       <div className="overflow-x-auto">
@@ -624,6 +654,9 @@ const Dashboard = () => {
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                 Event
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                Type
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                 Date
@@ -636,16 +669,23 @@ const Dashboard = () => {
               </th>
             </tr>
           </thead>
-          <tbody className=" divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200">
             {registeredEvents.map(event => (
               <tr
                 key={event.id}
                 className="transition-colors"
               >
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium ">
+                  <div className="text-sm font-medium text-gray-300">
                     {event.title}
                   </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    event.type === 'subevent' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {event.type === 'subevent' ? 'Sub-Event' : 'Main Event'}
+                  </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {event.date}
@@ -655,9 +695,15 @@ const Dashboard = () => {
                     {event.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 space-x-2">
                   <button
-                    onClick={() => navigate(`/events/${event.id}`)}
+                    onClick={() => {
+                      // Navigate to the event with sub-event ID in the URL hash if it's a sub-event
+                      const url = event.type === 'subevent' 
+                        ? `/events/${event.eventId}#${event.subEventId}`
+                        : `/events/${event.eventId}`;
+                      navigate(url);
+                    }}
                     className="text-blue-600 hover:text-blue-800 font-medium"
                   >
                     View Details
