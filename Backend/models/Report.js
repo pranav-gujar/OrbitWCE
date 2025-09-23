@@ -45,10 +45,35 @@ const ReportSchema = new Schema({
         date: Date,
         location: String,
         description: String,
-        category: String
+        category: String,
+        
+        subEvents: [{
+            name: String,
+            date: Date,
+            venue: String,
+            description: String,
+            totalRegistered: Number,
+            participants: [{
+                name: String,
+                email: String,
+                phone: String,
+                instituteName: String,
+                registeredAt: Date
+            }],
+            fee: Number,
+            prize: String
+        }]
     },
     participantData: {
         totalRegistered: {
+            type: Number,
+            default: 0
+        },
+        totalMainEventRegistrations: {
+            type: Number,
+            default: 0
+        },
+        totalSubEventRegistrations: {
             type: Number,
             default: 0
         },
@@ -59,7 +84,11 @@ const ReportSchema = new Schema({
         participants: [{
             name: String,
             email: String,
-            role: String
+            phone: String,
+            instituteName: String,
+            role: String,
+            subEvent: String,
+            registeredAt: Date
         }]
     },
     notes: {

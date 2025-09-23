@@ -40,8 +40,32 @@ exports.createOrGetReport = async (req, res) => {
         
         // Get event registrations for participant data
         const registrations = event.registrations || [];
+        const likes = event.likes || [];
         
-        // Create new report
+        // Process sub-events data
+        const subEventsData = (event.subEvents || []).map(subEvent => ({
+            name: subEvent.name,
+            date: subEvent.date,
+            venue: subEvent.venue,
+            description: subEvent.description,
+            totalRegistered: subEvent.registrations?.length || 0,
+            participants: (subEvent.registrations || []).map(reg => ({
+                name: reg.name,
+                email: reg.email,
+                phone: reg.phone,
+                instituteName: reg.instituteName,
+                registeredAt: reg.registeredAt
+            })),
+            fee: subEvent.fee,
+            prize: subEvent.prize
+        }));
+        
+        // Calculate total registrations including sub-events
+        const totalSubEventRegistrations = subEventsData.reduce(
+            (total, subEvent) => total + (subEvent.participants?.length || 0), 0
+        );
+        
+        // Create new report with enhanced data
         report = new Report({
             event: eventId,
             creator: req.user.id,
@@ -50,16 +74,32 @@ exports.createOrGetReport = async (req, res) => {
                 date: event.date,
                 location: event.location,
                 description: event.description,
-                category: event.category
+                category: event.category,
+                totalLikes: likes.length,
+                subEvents: subEventsData.length > 0 ? subEventsData : undefined
             },
             participantData: {
-                totalRegistered: registrations.length,
+                totalRegistered: registrations.length + totalSubEventRegistrations,
+                totalMainEventRegistrations: registrations.length,
+                totalSubEventRegistrations: totalSubEventRegistrations,
                 totalAttended: event.attendees || 0,
-                participants: registrations.map(reg => ({
-                    name: reg.name,
-                    email: reg.email,
-                    role: 'Participant'
-                }))
+                participants: [
+                    ...registrations.map(reg => ({
+                        name: reg.name,
+                        email: reg.email,
+                        phone: reg.phone,
+                        instituteName: reg.instituteName,
+                        role: 'Main Event Participant',
+                        registeredAt: reg.registeredAt
+                    })),
+                    ...subEventsData.flatMap((subEvent, index) => 
+                        subEvent.participants.map(participant => ({
+                            ...participant,
+                            role: `Sub-Event: ${subEvent.name}`,
+                            subEvent: subEvent.name
+                        }))
+                    )
+                ]
             },
             highlights: `${event.title} was successfully held on ${new Date(event.date).toLocaleDateString()}.`,
             feedback: 'Participants enjoyed the event and provided positive feedback.'
