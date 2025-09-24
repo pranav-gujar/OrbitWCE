@@ -149,14 +149,15 @@ export default function Home() {
                   Join Now
                 </button>
               )}
-            </div>
-
-            <button 
+              <button 
               onClick={() => navigate('/about')}
               className="border border-white text-white px-6 py-3 rounded-full font-medium hover:bg-white/10 transition-colors"
             >
               Learn More
             </button>
+            </div>
+
+          
           </motion.div>
         </div>
       </section>
