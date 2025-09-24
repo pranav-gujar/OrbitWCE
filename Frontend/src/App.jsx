@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import { AuthContext } from './AuthContext/AuthContext';
 import Navbar from './Components/Navbar/Navbar';
+import Footer from './Components/Footer/Footer';
 import SuperAdminRoute from './Components/ProtectedRoutes/SuperAdminRoute';
 import UserRoute from './Components/ProtectedRoutes/UserRoute';
 import ForgetPassword from './pages/Auth/ForgetPassword/ForgetPassword';
@@ -30,6 +31,9 @@ import SuperAdminReports from './pages/Reports/SuperAdminReports';
 import Permissions from './pages/SuperAdmin/Permissions';
 import SuperApp from './pages/SuperAdmin/SuperApp';
 import CommunityProfile from './pages/Community/CommunityProfile';
+import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
+import TermsAndConditions from './pages/Legal/TermsAndConditions';
+import About from './pages/About/About';
 
 // Component to normalize the path by removing extra slashes
 const NormalizedRoute = ({ children }) => {
@@ -94,22 +98,24 @@ const StarsBackground = () => (
 function App() {
   return (
     <BrowserRouter>
-      <StarsBackground />
-      <Navbar />
-      <ToastContainer 
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-      <NormalizedRoute>
-          <Routes>
+      <div className="flex flex-col min-h-screen">
+        <StarsBackground />
+        <Navbar />
+        <ToastContainer 
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <main className="flex-grow">
+          <NormalizedRoute>
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -136,6 +142,9 @@ function App() {
             
             {/* Community Profile Route */}
             <Route path="/community/:id" element={<CommunityProfile />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-conditions" element={<TermsAndConditions />} />
             
             {/* Protected User Routes - Block SuperAdmin */}
             <Route element={<UserRoute />}>
@@ -164,10 +173,13 @@ function App() {
             </Route>
             
             {/* Catch all other routes - Must be the last route */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </NormalizedRoute>
-      </BrowserRouter>
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </NormalizedRoute>
+        </main>
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 }
 

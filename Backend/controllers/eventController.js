@@ -188,7 +188,7 @@ exports.getEvents = async (req, res) => {
         }
 
         const events = await Event.find(query)
-            .populate('creator', 'name email role')
+            .populate('creator', 'name email role communityName')
             .sort({ date: 1 }); // Sort by date ascending
 
         res.status(200).json({
@@ -251,6 +251,7 @@ exports.getMyEvents = async (req, res) => {
         }
 
         const events = await Event.find({ creator: req.user.id })
+            .populate('creator', 'name email role communityName')
             .sort({ createdAt: -1 }); // Sort by creation date, newest first
 
         res.status(200).json({

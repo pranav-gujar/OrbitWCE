@@ -161,7 +161,16 @@ const Event = ({
 
       {/* Event Content */}
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-white mb-2 line-clamp-1">{title}</h3>
+        <h3 className="text-lg font-semibold text-white mb-1 line-clamp-1">{title}</h3>
+        
+        {/* Community Name */}
+        {creator && typeof creator === 'object' && (
+          <div className="text-sm text-gray-400 mb-2 line-clamp-1">
+            {creator.communityName ? ` ${creator.communityName}` : 
+             creator.name ? `${creator.name}` : 
+             ' PGT Community'}
+          </div>
+        )}
         
         <p className="text-gray-300 text-sm mb-4 line-clamp-2">
           {description}

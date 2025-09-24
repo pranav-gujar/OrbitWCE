@@ -100,6 +100,12 @@ const UserSchema = new Schema({
     resetPasswordToken: String,
     resetPasswordExpires: Date,
     
+    // Community-specific fields
+    communityName: {
+        type: String,
+        default: ''
+    },
+    
     // Profile fields for all users
     photo: {
         type: String,

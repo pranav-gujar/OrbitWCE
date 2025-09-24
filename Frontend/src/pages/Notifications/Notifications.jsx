@@ -242,15 +242,7 @@ const Notifications = () => {
                           <FaCheck className="h-4 w-4" />
                         </motion.button>
                       )}
-                      <motion.button
-                        whileHover={{ scale: 1.1, backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => deleteNotification(notification._id)}
-                        className="p-2 rounded-full text-red-600 hover:bg-red-50 transition-all"
-                        title="Delete notification"
-                      >
-                        <FaTimes className="h-4 w-4" />
-                      </motion.button>
+                     
                     </div>
                   </div>
                 </div>

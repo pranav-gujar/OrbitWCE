@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaCalendarAlt, FaUsers, FaCode, FaMusic, FaFutbol, FaUserTie, FaLinkedin, FaTwitter, FaGithub } from 'react-icons/fa';
 import { SiLeetcode } from 'react-icons/si';
 import { motion } from 'framer-motion';
+import AuthContext from '../../AuthContext/AuthContext';
 
 // Dummy data for communities (will be replaced with real data)
 const dummyCommunities = Array.from({ length: 15 }, (_, i) => ({
@@ -74,6 +75,7 @@ const mentor = {
 
 export default function Home() {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [activeFilter, setActiveFilter] = useState('All');
   const [visibleCommunities, setVisibleCommunities] = useState(6);
   const [communities, setCommunities] = useState([]);
@@ -139,71 +141,33 @@ export default function Home() {
               Join our community to connect, learn, and grow together. Participate in events, share knowledge, and build meaningful connections.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                Join Now
-              </button>
-              <button className="bg-transparent hover:bg-white/10 text-white border border-white px-6 py-3 rounded-lg font-medium transition-colors">
-                Learn More
-              </button>
+              {!user && (
+                <button 
+                  onClick={() => navigate('/login')}
+                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-medium transition-colors"
+                >
+                  Join Now
+                </button>
+              )}
             </div>
+
+            <button 
+              onClick={() => navigate('/about')}
+              className="border border-white text-white px-6 py-3 rounded-full font-medium hover:bg-white/10 transition-colors"
+            >
+              Learn More
+            </button>
           </motion.div>
         </div>
       </section>
 
-      {/* Upcoming Events */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 text-gray-100">
-          <motion.h2 
-            className=" font-bold text-center mb-8 text-3xl text-gray-100"
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Upcoming Events
-          </motion.h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.slice(0, 3).map((event, index) => (
-              <motion.div 
-                key={event.id}
-                className="relative border border-gray-200 rounded-lg overflow-hidden bg-transparent transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.8)] hover:-translate-y-1"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-              >
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                      {event.type}
-                    </span>
-                    <span className="text-sm text-gray-300">{event.date}</span>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-200">{event.title}</h3>
-                  <p className="text-slate-300 mb-4">{event.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-300">2 days left</span>
-                    <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                      Learn More
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <button className="px-6 py-2 border border-gray-400 text-gray-400 rounded-lg hover:bg-gray-50 transition-colors">
-              View All Events
-            </button>
-          </div>
-        </div>
-      </section>
+    
 
       {/* Communities */}
       <section className="py-16 ">
         <div className="container mx-auto px-4 text-gray-100">
           <motion.h2 
-            className="font-bold text-center mb-8 text-3xl text-gray-100"
+            className="font-bold text-center  text-3xl text-gray-100"
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -220,7 +184,7 @@ export default function Home() {
           )}
 
           {error && !loading && (
-            <div className="text-center py-12">
+            <div className="text-center py-12 mt-5">
               <p className="text-gray-300 mb-4">{error}</p>
               <button 
                 onClick={fetchCommunityUsers}
@@ -240,7 +204,7 @@ export default function Home() {
 
           {!loading && communities.length > 0 && (
             <>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-5">
                 {communities.slice(0, visibleCommunities).map((community, index) => (
                   <motion.div 
                     key={community._id || community.id}
@@ -287,61 +251,7 @@ export default function Home() {
           )}
         </div>
       </section>
-
-      {/* Events with Filters */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 text-gray-100">
-          <h2 className="text-3xl text-gray-100 font-bold text-center mb-8">All Events</h2>
-          
-          {/* Filters */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {['All', 'Technical', 'Social', 'Cultural', 'Sports'].map(filter => (
-              <button
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  activeFilter === filter
-                    ? 'bg-red-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-
-          {/* Events Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredEvents.map((event, index) => (
-              <motion.div 
-                key={event.id}
-                className="relative border border-gray-200 rounded-lg overflow-hidden bg-transparent transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.8)] hover:-translate-y-1"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-              >
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                      {event.type}
-                    </span>
-                    <span className="text-sm text-gray-300">{event.date}</span>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-200">{event.title}</h3>
-                  <p className="text-gray-300 mb-6">{event.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-300">2 days left</span>
-                    <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                      Register
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+    
 
       {/* Our Team */}
       <section className="py-16">
@@ -492,18 +402,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16  text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Join Our Community?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Become part of our growing community and never miss out on exciting events and opportunities.
-          </p>
-          <button className="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
-            Sign Up Now
-          </button>
-        </div>
-      </section>
+    
     </div>
   );
 }

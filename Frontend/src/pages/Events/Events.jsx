@@ -132,127 +132,68 @@ const Events = () => {
     try {
       setIsLoading(true);
       
-      let url = `${import.meta.env.VITE_API_URL}/api/events`;
-      
-      // If user is a community member, only fetch their events
-      if (user?.role === 'community') {
-        url = `${import.meta.env.VITE_API_URL}/api/events/user/my-events`;
-      }
-      let likedEvents = [];
-      let registeredEvents = [];
-      let headers = {
+      const token = localStorage.getItem('token');
+      const headers = {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
       };
       
-      // Add authorization header if user is logged in
-      const token = localStorage.getItem('token');
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-        
-        // Fetch user's liked events if logged in
-        try {
-          const likedResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/events/user/liked`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          
-          if (likedResponse.ok) {
-            const likedData = await likedResponse.json();
-            likedEvents = likedData.data || [];
-          }
-          
-          // Fetch events the user is registered for
-          if (user && user.email) {
-            const eventsResponse = await fetch(url, { method: 'GET', headers });
-            const eventsData = await eventsResponse.json();
-            
-            if (eventsResponse.ok) {
-              const allEvents = eventsData.data || [];
-              // Check each event's registrations for the user's email
-              registeredEvents = allEvents.filter(event => 
-                event.registrations && 
-                event.registrations.some(reg => reg.email === user.email)
-              ).map(event => event._id);
-            }
-          }
-        } catch (error) {
-          console.error('Error fetching liked or registered events:', error);
-          // Continue with main events fetch even if liked events fetch fails
-        }
-      }
-
-      // For community users, fetch their own events separately and merge with approved events
+      // Fetch events based on user role
+      let eventsUrl = `${import.meta.env.VITE_API_URL}/api/events`;
       if (user?.role === 'community') {
-        // Fetch approved events
-        const approvedResponse = await fetch(url, { method: 'GET', headers });
-        const approvedData = await approvedResponse.json();
+        eventsUrl = `${import.meta.env.VITE_API_URL}/api/events/user/my-events`;
+      }
+      
+      console.log('Fetching events from:', eventsUrl);
+      
+      // Fetch events
+      console.log('Making request to:', eventsUrl);
+      const response = await fetch(eventsUrl, { headers });
+      console.log('Response status:', response.status);
+      const result = await response.json();
+      console.log('API Response:', result);
+      
+      if (response.ok) {
+        const eventsData = result.data || [];
+        console.log('Fetched events:', eventsData);
         
-        // Fetch user's own events
-        const myEventsResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/events/user/my-events`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const myEventsData = await myEventsResponse.json();
+        // Fetch liked events if user is logged in
+        let likedEvents = [];
+        let registeredEvents = [];
         
-        if (approvedResponse.ok && myEventsResponse.ok) {
-          const approvedEvents = approvedData.data || [];
-          const myEvents = myEventsData.data || [];
-          
-          // Merge events and remove duplicates (prioritize user's events)
-          const allEvents = [...myEvents];
-          approvedEvents.forEach(event => {
-            if (!allEvents.some(e => e._id === event._id)) {
-              allEvents.push(event);
+        if (token) {
+          try {
+            // Get liked events
+            const likedResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/events/user/liked`, { headers });
+            if (likedResponse.ok) {
+              const likedData = await likedResponse.json();
+              likedEvents = likedData.data || [];
             }
-          });
-          
-          // Mark events as liked and registered if they are in the user's liked/registered events
-          const eventsWithStatus = allEvents.map(event => ({
-            ...event,
-            isLiked: likedEvents.some(likedEvent => likedEvent._id === event._id),
-            isRegistered: registeredEvents.includes(event._id)
-          }));
-          
-          setEvents(eventsWithStatus);
-        } else {
-          showError('Failed to fetch events');
-        }
-      } else {
-        // For other roles, use the standard endpoint
-        const response = await fetch(url, { method: 'GET', headers });
-        const data = await response.json();
-
-        if (response.ok) {
-          const eventsArray = data.data || [];
-          
-          // Filter events based on user role
-          let filteredEvents;
-          
-          if (user?.role === 'user') {
-            // Regular users only see approved events
-            filteredEvents = eventsArray.filter(event => event.status === 'approved');
-          } else {
-            // Admin/superadmin see all events
-            filteredEvents = eventsArray;
+            
+            // Get registered events if user is logged in
+            if (user?.email) {
+              registeredEvents = eventsData
+                .filter(event => 
+                  event.registrations?.some(reg => reg.email === user.email)
+                )
+                .map(event => event._id);
+            }
+          } catch (error) {
+            console.error('Error fetching additional event data:', error);
           }
-          
-          // Mark events as liked and registered if they are in the user's liked/registered events
-          const eventsWithStatus = filteredEvents.map(event => ({
-            ...event,
-            isLiked: likedEvents.some(likedEvent => likedEvent._id === event._id),
-            isRegistered: registeredEvents.includes(event._id)
-          }));
-          
-          setEvents(eventsWithStatus);
-        } else {
-          showError(data.message || 'Failed to fetch events');
         }
+        
+        // Add status flags to events
+        const eventsWithStatus = eventsData.map(event => ({
+          ...event,
+          isLiked: likedEvents.some(liked => liked._id === event._id),
+          isRegistered: registeredEvents.includes(event._id)
+        }));
+        
+        console.log('Setting events with status:', eventsWithStatus);
+        setEvents(eventsWithStatus);
+      } else {
+        showError(result.message || 'Failed to fetch events');
       }
     } catch (error) {
       console.error('Fetch events error:', error);
@@ -326,8 +267,24 @@ const Events = () => {
     }
   };
 
+  console.log('All events:', events);
+  
   const filteredEvents = events.filter(event => {
-    if (!event || !event.title || !event.description) return false;
+    if (!event || !event.title || !event.description) {
+      console.log('Filtering out invalid event:', event);
+      return false;
+    }
+    
+    // For community users, show all their events regardless of status
+    if (user?.role === 'community') {
+      const creatorId = typeof event.creator === 'object' ? event.creator._id : event.creator;
+      if (creatorId === user?._id) {
+        return true;
+      }
+    }
+    
+    // For other users, only show approved events
+    if (event.status !== 'approved') return false;
     
     // Search filter
     const matchesSearch = searchTerm === '' || 
@@ -353,6 +310,8 @@ const Events = () => {
     return matchesSearch && matchesFilter;
   });
 
+  console.log('Filtered events:', filteredEvents);
+  
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto text-gray-100 ">
