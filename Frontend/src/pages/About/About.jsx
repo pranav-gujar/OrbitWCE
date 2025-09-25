@@ -100,7 +100,7 @@ const About = () => {
           <h2 className="text-3xl font-bold text-center mb-16">How It Works</h2>
           <div className="max-w-4xl mx-auto">
             <div className="relative">
-              <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-red-600"></div>
+             
               
               {[
                 {
