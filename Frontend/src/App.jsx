@@ -1,12 +1,13 @@
-
-import { useContext } from 'react';
-import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useParams } from 'react-router-dom';
+import { useContext, useState, useEffect } from 'react';
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useParams, useNavigate } from 'react-router-dom';
+import Loader from './Components/Loader/Loader';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import { AuthContext } from './AuthContext/AuthContext';
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
+import ScrollToTop from './Components/ScrollToTop/ScrollToTop';
 import SuperAdminRoute from './Components/ProtectedRoutes/SuperAdminRoute';
 import UserRoute from './Components/ProtectedRoutes/UserRoute';
 import ForgetPassword from './pages/Auth/ForgetPassword/ForgetPassword';
@@ -95,92 +96,151 @@ const StarsBackground = () => (
   <div className="stars"></div>
 );
 
+// Main App component
 function App() {
+  const { user, loading: authLoading } = useContext(AuthContext);
+  
+  // Wrapper component to handle routing and navigation
+  const AppContent = () => {
+    const [isNavigating, setIsNavigating] = useState(true);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const location = useLocation();
+
+    useEffect(() => {
+      // Hide initial load and show content after 1 second
+      const timer = setTimeout(() => {
+        setIsNavigating(false);
+        setIsInitialLoad(false);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }, []);
+
+    useEffect(() => {
+      // Only show navigation loader after initial load
+      if (!isInitialLoad) {
+        const handleStart = () => setIsNavigating(true);
+        const handleComplete = () => {
+          setTimeout(() => {
+            setIsNavigating(false);
+          }, 500); // Shorter duration for in-app navigation
+        };
+
+        handleStart();
+        const timer = setTimeout(handleComplete, 500);
+        return () => clearTimeout(timer);
+      }
+    }, [location, isInitialLoad]);
+
+    return (
+      <>
+        {isNavigating && <Loader />}
+        <div className="flex flex-col min-h-screen">
+          <StarsBackground />
+          <Navbar />
+          <ToastContainer 
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+          <main className="flex-grow">
+            <NormalizedRoute>
+              <Routes>
+                {/* Your routes here */}
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgetPassword />} />
+                <Route path="/verify-email-otp" element={<VerifyEmailOTP />} />
+                <Route path="/reset-password-otp" element={<VerifyPasswordOTP />} />
+                <Route path="/verify-email/:token" element={<VerifyEmailWrapper />} />
+                <Route path="/reset-password/:token" element={<ResetPasswordWrapper />} />
+                
+                {/* SuperAdmin Routes */}
+                <Route path="/superadmin">
+                  <Route element={<SuperAdminRoute />}>
+                    <Route index element={<SuperApp />} />
+                    <Route path="events" element={<SuperAdminEvents />} />
+                    <Route path="deletion-requests" element={<DeletionRequests />} />
+                    <Route path="reports" element={<SuperAdminReports />} />
+                    <Route path="permissions" element={<Permissions />} />
+                  </Route>
+                </Route>
+                
+                {/* Public Event Routes */}
+                <Route path="/events" element={<Events />} />
+                <Route path="/events/:id" element={<EventDetail />} />
+                
+                {/* Community Profile Route */}
+                <Route path="/community/:id" element={<CommunityProfile />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-conditions" element={<TermsAndConditions />} />
+                
+                {/* Protected User Routes - Block SuperAdmin */}
+                <Route element={<UserRoute />}>
+                  <Route path="/dashboard" element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/profile" element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/profile/edit" element={
+                    <ProtectedRoute roles={['user']}>
+                      <UserProfileEdit />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/reports" element={
+                    <ProtectedRoute roles={['community']}>
+                      <Reports />
+                    </ProtectedRoute>
+                  } />
+                </Route>
+                
+                {/* Catch all other routes - Must be the last route */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </NormalizedRoute>
+          </main>
+          <Footer />
+        </div>
+      </>
+    );
+  };
+
+  // Show loading screen during initial auth check
+  if (authLoading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-900 z-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-600 mx-auto mb-4"></div>
+          <p className="text-white text-lg font-medium">Loading PGT Global Networks</p>
+          <p className="text-gray-400 text-sm mt-2">Please wait...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Once auth is loaded, show the app content with navigation loader
   return (
     <BrowserRouter>
-      <div className="flex flex-col min-h-screen">
-        <StarsBackground />
-        <Navbar />
-        <ToastContainer 
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-        <main className="flex-grow">
-          <NormalizedRoute>
-            <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgetPassword />} />
-            <Route path="/verify-email-otp" element={<VerifyEmailOTP />} />
-            <Route path="/reset-password-otp" element={<VerifyPasswordOTP />} />
-            <Route path="/verify-email/:token" element={<VerifyEmailWrapper />} />
-            <Route path="/reset-password/:token" element={<ResetPasswordWrapper />} />
-            
-            {/* SuperAdmin Routes */}
-            <Route path="/superadmin">
-              <Route element={<SuperAdminRoute />}>
-                <Route index element={<SuperApp />} />
-                <Route path="events" element={<SuperAdminEvents />} />
-                <Route path="deletion-requests" element={<DeletionRequests />} />
-                <Route path="reports" element={<SuperAdminReports />} />
-                <Route path="permissions" element={<Permissions />} />
-              </Route>
-            </Route>
-            
-            {/* Public Event Routes */}
-            <Route path="/events" element={<Events />} />
-            <Route path="/events/:id" element={<EventDetail />} />
-            
-            {/* Community Profile Route */}
-            <Route path="/community/:id" element={<CommunityProfile />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-conditions" element={<TermsAndConditions />} />
-            
-            {/* Protected User Routes - Block SuperAdmin */}
-            <Route element={<UserRoute />}>
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile/edit" element={
-                <ProtectedRoute roles={['user']}>
-                  <UserProfileEdit />
-                </ProtectedRoute>
-              } />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/reports" element={
-                <ProtectedRoute roles={['community']}>
-                  <Reports />
-                </ProtectedRoute>
-              } />
-            </Route>
-            
-            {/* Catch all other routes - Must be the last route */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </NormalizedRoute>
-        </main>
-        <Footer />
-      </div>
+      <ScrollToTop />
+      <AppContent />
     </BrowserRouter>
-  );
+  )
 }
 
 export default App;

@@ -53,6 +53,9 @@ const CommunityProfile = () => {
   const teamMembers = communityUser?.teamMembers || [];
 
   useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0);
+    
     fetchCommunityUser();
     fetchCommunityEvents();
   }, [id]);

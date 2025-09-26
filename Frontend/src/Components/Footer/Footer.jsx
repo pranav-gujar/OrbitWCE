@@ -47,13 +47,7 @@ const Footer = () => {
               >
                 Events
               </Link></li>
-              <li><Link 
-                to="/dashboard" 
-                className="text-gray-400 hover:text-white transition-colors"
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                Dashboard
-              </Link></li>
+          
              
             </ul>
           </div>

@@ -607,8 +607,8 @@ const Dashboard = () => {
       <ul className="divide-y divide-gray-200">
         {events.map(event => (
           <li
-            key={event.id}
-            className="py-3  transition-colors"
+            key={event._id}
+            className="py-3 transition-colors"
           >
             <div className="flex justify-between items-start">
               <div>
