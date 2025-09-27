@@ -84,36 +84,43 @@ const userRegistration = async (req, res) => {
             </div>
         `;
 
-        // Send email in the background without blocking the registration
-        (async () => {
-            try {
-                console.log('Sending verification email to:', savedUser.email);
-                await sendEmail(
-                    savedUser.email, 
-                    'Verify Your Email - PGT Global Networks', 
-                    emailContent
-                );
-                console.log('Verification email sent successfully to:', savedUser.email);
-            } catch (emailError) {
-                console.error('Failed to send verification email to', savedUser.email, ':', {
-                    message: emailError.message,
-                    stack: emailError.stack,
-                    code: emailError.code,
-                    response: emailError.response
+        // Queue the verification email (non-blocking)
+        sendEmail(
+            savedUser.email, 
+            'Verify Your Email - PGT Global Networks', 
+            emailContent
+        ).then(result => {
+            if (!result.success) {
+                logger.error('Failed to queue verification email', {
+                    userId: savedUser._id,
+                    email: savedUser.email,
+                    error: result.error
                 });
                 
-                // Update user record with email sending failure
-                await User.findByIdAndUpdate(savedUser._id, {
+                // Update user record with email queue failure
+                return User.findByIdAndUpdate(savedUser._id, {
                     $set: {
                         emailError: {
-                            message: emailError.message,
-                            code: emailError.code,
-                            timestamp: new Date()
+                            message: result.error || 'Failed to queue email',
+                            timestamp: new Date(),
+                            queueError: true
                         }
                     }
                 });
             }
-        })(); // Self-executing async function
+            logger.info('Verification email queued successfully', {
+                userId: savedUser._id,
+                email: savedUser.email,
+                queuePosition: result.queuePosition
+            });
+        }).catch(error => {
+            logger.error('Unexpected error in email queue processing', {
+                userId: savedUser._id,
+                email: savedUser.email,
+                error: error.message,
+                stack: error.stack
+            });
+        });
 
         // response send client side 
         const responseUser = {

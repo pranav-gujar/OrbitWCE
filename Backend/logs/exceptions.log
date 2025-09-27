@@ -1,0 +1,54 @@
+2025-09-27 11:30:54 [[31merror[39m]: uncaughtException: logger is not defined
+ReferenceError: logger is not defined
+    at /Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/controllers/controller-user.js:117:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  "error": {},
+  "stack": "ReferenceError: logger is not defined\n    at /Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/controllers/controller-user.js:117:13\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+  "exception": true,
+  "date": "Sat Sep 27 2025 11:30:54 GMT+0530 (India Standard Time)",
+  "process": {
+    "pid": 67182,
+    "uid": 501,
+    "gid": 20,
+    "cwd": "/Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend",
+    "execPath": "/usr/local/bin/node",
+    "version": "v22.14.0",
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/server.js"
+    ],
+    "memoryUsage": {
+      "rss": 70287360,
+      "heapTotal": 32817152,
+      "heapUsed": 30110072,
+      "external": 20670856,
+      "arrayBuffers": 18329550
+    }
+  },
+  "os": {
+    "loadavg": [
+      2.376953125,
+      2.5126953125,
+      2.81005859375
+    ],
+    "uptime": 2467320
+  },
+  "trace": [
+    {
+      "column": 13,
+      "file": "/Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/controllers/controller-user.js",
+      "function": null,
+      "line": 117,
+      "method": null,
+      "native": false
+    },
+    {
+      "column": 5,
+      "file": "node:internal/process/task_queues",
+      "function": "process.processTicksAndRejections",
+      "line": 105,
+      "method": "processTicksAndRejections",
+      "native": false
+    }
+  ]
+}

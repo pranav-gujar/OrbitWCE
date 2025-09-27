@@ -1,97 +1,51 @@
-const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
-dotenv.config();
+const emailQueue = require('../emailQueue');
+const logger = require('../logger');
 
+/**
+ * Sends an email using the email queue system
+ * @param {string} to - Recipient email address
+ * @param {string} subject - Email subject
+ * @param {string} htmlContent - HTML content of the email
+ * @returns {Promise<Object>} - Information about the queued email
+ */
 const sendEmail = async (to, subject, htmlContent) => {
-    console.log('Starting email sending process...');
-    console.log('Environment variables:', {
-        EMAIL_USER: process.env.EMAIL_USER ? 'Set' : 'Missing',
-        NODE_ENV: process.env.NODE_ENV || 'development'
-    });
-
-    // Validate required environment variables
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        const error = new Error('Email configuration error: Missing required environment variables (EMAIL_USER or EMAIL_PASS)');
-        console.error(error.message);
-        console.error('Current environment variables:', Object.keys(process.env));
-        throw error;
-    }
-
-    // Validate email parameters
-    if (!to || !subject || !htmlContent) {
-        console.error('Email validation error: Missing required parameters', { to, subject, hasHtml: !!htmlContent });
-        throw new Error('Missing required email parameters');
-    }
-
-    let transporter;
     try {
-        console.log('Creating email transporter...');
-        const transporterConfig = {
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            },
-            // Add connection timeout
-            connectionTimeout: 15000, // 15 seconds
-            // Add more debugging
-            debug: true,
-            logger: (log) => console.log('Nodemailer:', log.message || log)
-        };
+        logger.info('Queueing email', { to, subject });
         
-        console.log('Transporter config:', {
-            ...transporterConfig,
-            auth: { ...transporterConfig.auth, pass: '***' } // Don't log actual password
-        });
-        
-        transporter = nodemailer.createTransport(transporterConfig);
-
-        // Verify connection configuration
-        await transporter.verify();
-        console.log('Server is ready to take our messages');
-        
-        console.log(`Sending email to: ${to}`);
-        console.log(`Subject: ${subject}`);
-        
-        const mailOptions = {
-            from: `"PGT Global Networks" <${process.env.EMAIL_USER}>`,
+        const emailData = {
             to,
             subject,
-            html: htmlContent,
-            // Add text version for better deliverability
-            text: htmlContent.replace(/<[^>]*>?/gm, '') // Basic HTML to text conversion
+            html: htmlContent
         };
 
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully:', info.messageId);
-        return info;
+        // Add email to queue and return immediately
+        const queuedEmail = await emailQueue.addToQueue(emailData);
         
-    } catch (error) {
-        const errorDetails = {
-            error: error.message,
-            code: error.code,
-            stack: error.stack,
+        logger.info('Email queued successfully', {
             to,
-            subject: subject.substring(0, 50) + '...',
-            hasHtml: !!htmlContent,
-            environment: process.env.NODE_ENV || 'development'
+            queuePosition: emailQueue.queue.length,
+            emailId: queuedEmail.id
+        });
+
+        return {
+            success: true,
+            message: 'Email queued for sending',
+            emailId: queuedEmail.id,
+            queuePosition: emailQueue.queue.length
         };
+    } catch (error) {
+        logger.error('Failed to queue email', {
+            to,
+            error: error.message,
+            stack: error.stack
+        });
         
-        console.error('Email sending failed with details:', JSON.stringify(errorDetails, null, 2));
-        
-        if (error.response) {
-            console.error('SMTP Error Response:', error.response);
-        }
-        
-        // Throw a more descriptive error
-        const enhancedError = new Error(`Failed to send email: ${error.message}`);
-        enhancedError.details = errorDetails;
-        throw enhancedError;
-    } finally {
-        // Close the transporter when done
-        if (transporter) {
-            transporter.close();
-        }
+        // Return error without throwing to prevent registration failures
+        return {
+            success: false,
+            message: 'Failed to queue email',
+            error: error.message
+        };
     }
 };
 

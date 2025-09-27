@@ -13,6 +13,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -27,6 +28,7 @@
     "nodemon": "^3.1.9",
     "officegen": "^0.6.5",
     "pdfkit": "^0.17.2",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "winston": "^3.17.0"
   }
 }

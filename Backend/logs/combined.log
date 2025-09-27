@@ -1,0 +1,14 @@
+2025-09-27 11:30:54 [[32minfo[39m]: Queueing email {
+  "to": "xepos67534@rograc.com",
+  "subject": "Verify Your Email - PGT Global Networks"
+}
+2025-09-27 11:30:54 [[32minfo[39m]: Email queued successfully {
+  "to": "xepos67534@rograc.com",
+  "queuePosition": 0
+}
+2025-09-27 11:30:57 [[32minfo[39m]: Email sent successfully: {
+  "to": "xepos67534@rograc.com",
+  "messageId": "<e2ecc421-ab29-8b7c-8b06-ce29cb7d52ff@gmail.com>",
+  "response": "250 2.0.0 OK  1758952857 d2e1a72fcca58-781023e7098sm5862670b3a.45 - gsmtp"
+}
+2025-09-27 11:30:57 [[32minfo[39m]: Email sent to xepos67534@rograc.com after 1 attempts 
