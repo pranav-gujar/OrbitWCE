@@ -12,3 +12,9 @@
   "response": "250 2.0.0 OK  1758952857 d2e1a72fcca58-781023e7098sm5862670b3a.45 - gsmtp"
 }
 2025-09-27 11:30:57 [[32minfo[39m]: Email sent to xepos67534@rograc.com after 1 attempts 
+{"level":"info","message":"Queueing email","subject":"Verify Your Email - PGT Global Networks","timestamp":"2025-09-27 11:55:54","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Attempting to send email","subject":"Verify Your Email - PGT Global Networks","timestamp":"2025-09-27 11:55:54","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Email queued successfully","queuePosition":0,"timestamp":"2025-09-27 11:55:54","to":"xepos67534@rograc.com"}
+{"level":"info","message":"SMTP connection verified","timestamp":"2025-09-27 11:55:56"}
+{"envelope":{"from":"tohitk121@gmail.com","to":["xepos67534@rograc.com"]},"level":"info","message":"Email sent successfully:","messageId":"<3aef8b0b-5523-b2aa-1ff2-592d3010e2b7@gmail.com>","response":"250 2.0.0 OK  1758954359 d2e1a72fcca58-78102c06af6sm5835698b3a.88 - gsmtp","timestamp":"2025-09-27 11:55:59","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Email sent to xepos67534@rograc.com after 1 attempts","timestamp":"2025-09-27 11:55:59"}

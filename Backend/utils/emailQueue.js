@@ -13,6 +13,23 @@ class EmailQueue extends EventEmitter {
     }
 
     createTransporter() {
+        // Use SendGrid if SENDGRID_API_KEY is set, otherwise fall back to SMTP
+        if (process.env.SENDGRID_API_KEY) {
+            return nodemailer.createTransport({
+                host: 'smtp.sendgrid.net',
+                port: 587,
+                secure: false, // true for 465, false for other ports
+                auth: {
+                    user: 'apikey', // This is literally the word 'apikey'
+                    pass: process.env.SENDGRID_API_KEY
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });
+        }
+
+        // Fall back to Gmail SMTP
         return nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -73,32 +90,56 @@ class EmailQueue extends EventEmitter {
 
     async sendEmail({ to, subject, html }) {
         const mailOptions = {
-            from: `"PGT Global Networks" <${process.env.EMAIL_USER}>`,
+            from: `"PGT Global Networks" <${process.env.EMAIL_USER || 'noreply@example.com'}>`,
             to,
             subject,
             html,
-            text: html.replace(/<[^>]*>?/gm, '')
+            text: html.replace(/<[^>]*>?/gm, ''),
+            // Add headers to prevent emails from being marked as spam
+            headers: {
+                'X-Priority': '1',
+                'X-MSMail-Priority': 'High',
+                'Importance': 'high'
+            }
         };
 
-        return new Promise((resolve, reject) => {
-            this.transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    logger.error('Email send error:', {
-                        to,
-                        error: error.message,
-                        code: error.code,
-                        response: error.response
-                    });
-                    return reject(error);
-                }
-                logger.info('Email sent successfully:', {
-                    to,
-                    messageId: info.messageId,
-                    response: info.response
-                });
-                resolve(info);
+        logger.info('Attempting to send email', { to, subject });
+
+        try {
+            // Verify connection first
+            await this.transporter.verify();
+            logger.info('SMTP connection verified');
+            
+            const info = await this.transporter.sendMail(mailOptions);
+            
+            logger.info('Email sent successfully:', {
+                to,
+                messageId: info.messageId,
+                response: info.response,
+                envelope: info.envelope
             });
-        });
+            
+            return info;
+        } catch (error) {
+            const errorDetails = {
+                to,
+                error: error.message,
+                code: error.code,
+                stack: error.stack,
+                response: error.response,
+                command: error.command
+            };
+            
+            logger.error('Email send error:', errorDetails);
+            
+            // If it's a connection error, try recreating the transporter
+            if (error.code === 'ECONNECTION' || error.code === 'EAUTH') {
+                logger.info('Recreating transporter due to connection/auth error');
+                this.transporter = this.createTransporter();
+            }
+            
+            throw error;
+        }
     }
 }
 
