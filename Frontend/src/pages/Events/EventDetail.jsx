@@ -147,6 +147,13 @@ const EventDetail = () => {
 
   const handleRegistrationSubmit = async (e) => {
     e.preventDefault();
+    
+    // Basic form validation
+    if (!registrationForm.name || !registrationForm.email || !registrationForm.phone) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    
     try {
       // Show loading state
       setLoading(true);
@@ -155,7 +162,7 @@ const EventDetail = () => {
       const token = localStorage.getItem('token');
       const headers = {
         'Content-Type': 'application/json',
-        ...token && { 'Authorization': `Bearer ${token}` }
+        ...(token && { 'Authorization': `Bearer ${token}` })
       };
       
       // Prepare registration data
@@ -167,7 +174,7 @@ const EventDetail = () => {
         degree: registrationForm.degree,
         branch: registrationForm.branch,
         year: registrationForm.year,
-        transactionId: registrationForm.transactionId || 'N/A', // Provide default value if empty
+        transactionId: registrationForm.transactionId || 'N/A',
         ...(selectedSubEvent && { subEventId: selectedSubEvent._id })
       };
       
@@ -183,45 +190,40 @@ const EventDetail = () => {
         body: JSON.stringify(registrationData)
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Registration failed:', errorData);
-        throw new Error(errorData.message || 'Registration failed');
-      }
-      
       const data = await response.json();
       
-      if (response.ok) {
-        // Show success message
-        alert('Registration successful! A confirmation email has been sent to your email address.');
-        
-        // Set registration status
-        setIsRegistered(true);
-        
-        // Reset form and close modal
-        setRegistrationForm({
-          name: '',
-          email: '',
-          phone: '',
-          instituteName: '',
-          degree: '',
-          branch: '',
-          year: '',
-          idCard: null,
-          transactionId: ''
-        });
-        setIdCardPreview(null);
-        handleRegistrationClose();
-        
-        // Refresh event data to update attendees count
-        fetchEvent();
-        
-        // Open Google Calendar link in a new tab
-        if (data.data && data.data.calendarUrl) {
-          window.open(data.data.calendarUrl, '_blank');
-        }
-      } else {
+      if (!response.ok) {
+        console.error('Registration failed:', data);
         throw new Error(data.message || 'Registration failed');
+      }
+      
+      // Show success message
+      alert('Registration successful! A confirmation email has been sent to your email address.');
+      
+      // Set registration status
+      setIsRegistered(true);
+      
+      // Reset form and close modal
+      setRegistrationForm({
+        name: '',
+        email: '',
+        phone: '',
+        instituteName: '',
+        degree: '',
+        branch: '',
+        year: '',
+        idCard: null,
+        transactionId: ''
+      });
+      setIdCardPreview(null);
+      handleRegistrationClose();
+      
+      // Refresh event data to update attendees count
+      await fetchEvent();
+      
+      // Open Google Calendar link in a new tab if available
+      if (data.data && data.data.calendarUrl) {
+        window.open(data.data.calendarUrl, '_blank');
       }
     } catch (error) {
       console.error('Error registering for event:', error);
