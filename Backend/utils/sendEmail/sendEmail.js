@@ -3,10 +3,18 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const sendEmail = async (to, subject, htmlContent) => {
+    console.log('Starting email sending process...');
+    console.log('Environment variables:', {
+        EMAIL_USER: process.env.EMAIL_USER ? 'Set' : 'Missing',
+        NODE_ENV: process.env.NODE_ENV || 'development'
+    });
+
     // Validate required environment variables
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        console.error('Email configuration error: Missing required environment variables (EMAIL_USER or EMAIL_PASS)');
-        throw new Error('Email service configuration error');
+        const error = new Error('Email configuration error: Missing required environment variables (EMAIL_USER or EMAIL_PASS)');
+        console.error(error.message);
+        console.error('Current environment variables:', Object.keys(process.env));
+        throw error;
     }
 
     // Validate email parameters
@@ -18,18 +26,25 @@ const sendEmail = async (to, subject, htmlContent) => {
     let transporter;
     try {
         console.log('Creating email transporter...');
-        transporter = nodemailer.createTransport({
+        const transporterConfig = {
             service: 'gmail',
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
             },
             // Add connection timeout
-            connectionTimeout: 10000, // 10 seconds
+            connectionTimeout: 15000, // 15 seconds
             // Add more debugging
             debug: true,
-            logger: true
+            logger: (log) => console.log('Nodemailer:', log.message || log)
+        };
+        
+        console.log('Transporter config:', {
+            ...transporterConfig,
+            auth: { ...transporterConfig.auth, pass: '***' } // Don't log actual password
         });
+        
+        transporter = nodemailer.createTransport(transporterConfig);
 
         // Verify connection configuration
         await transporter.verify();
@@ -52,14 +67,26 @@ const sendEmail = async (to, subject, htmlContent) => {
         return info;
         
     } catch (error) {
-        console.error('Email sending failed:', {
+        const errorDetails = {
             error: error.message,
+            code: error.code,
             stack: error.stack,
             to,
             subject: subject.substring(0, 50) + '...',
-            hasHtml: !!htmlContent
-        });
-        throw new Error(`Failed to send email: ${error.message}`);
+            hasHtml: !!htmlContent,
+            environment: process.env.NODE_ENV || 'development'
+        };
+        
+        console.error('Email sending failed with details:', JSON.stringify(errorDetails, null, 2));
+        
+        if (error.response) {
+            console.error('SMTP Error Response:', error.response);
+        }
+        
+        // Throw a more descriptive error
+        const enhancedError = new Error(`Failed to send email: ${error.message}`);
+        enhancedError.details = errorDetails;
+        throw enhancedError;
     } finally {
         // Close the transporter when done
         if (transporter) {

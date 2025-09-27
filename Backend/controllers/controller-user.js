@@ -70,22 +70,50 @@ const userRegistration = async (req, res) => {
 
         // Email content with OTP
         const emailContent = `
-            <h2>Email Verification</h2>
-            <p>Your verification code is: <strong>${emailOtp}</strong></p>
-            <p>This code will expire in 10 minutes.</p>
-            <p>Please enter this code on the verification page to complete your registration.</p>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #4a6baf;">Email Verification - PGT Global Networks</h2>
+                <p>Hello ${savedUser.name},</p>
+                <p>Thank you for registering with PGT Global Networks. Please use the following OTP to verify your email address:</p>
+                <div style="background: #f5f5f5; padding: 15px; margin: 20px 0; text-align: center; font-size: 24px; letter-spacing: 5px;">
+                    <strong>${emailOtp}</strong>
+                </div>
+                <p>This code will expire in 10 minutes.</p>
+                <p>If you did not request this, please ignore this email or contact support.</p>
+                <hr style="border: none; border-top: 1px solid #eaeaea; margin: 20px 0;">
+                <p style="color: #666; font-size: 12px;">This is an automated message, please do not reply directly to this email.</p>
+            </div>
         `;
 
-        try {
-            // Send Email 
-            console.log('Sending verification email to:', user.email);
-            await sendEmail(user.email, 'Verify Your Email', emailContent);
-            console.log('Verification email sent successfully');
-        } catch (emailError) {
-            console.error('Failed to send verification email:', emailError);
-            // Don't fail the registration if email sending fails, just log it
-            // The user can request a new verification email later
-        }
+        // Send email in the background without blocking the registration
+        (async () => {
+            try {
+                console.log('Sending verification email to:', savedUser.email);
+                await sendEmail(
+                    savedUser.email, 
+                    'Verify Your Email - PGT Global Networks', 
+                    emailContent
+                );
+                console.log('Verification email sent successfully to:', savedUser.email);
+            } catch (emailError) {
+                console.error('Failed to send verification email to', savedUser.email, ':', {
+                    message: emailError.message,
+                    stack: emailError.stack,
+                    code: emailError.code,
+                    response: emailError.response
+                });
+                
+                // Update user record with email sending failure
+                await User.findByIdAndUpdate(savedUser._id, {
+                    $set: {
+                        emailError: {
+                            message: emailError.message,
+                            code: emailError.code,
+                            timestamp: new Date()
+                        }
+                    }
+                });
+            }
+        })(); // Self-executing async function
 
         // response send client side 
         const responseUser = {
