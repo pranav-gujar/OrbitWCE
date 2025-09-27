@@ -340,10 +340,20 @@ exports.updateEvent = async (req, res) => {
             });
         }
 
-        const { title, description, date, location, imageUrl, category, status } = req.body;
+        const { title, description, date, location, imageUrl, category, status, subEvents } = req.body;
 
+        // Prepare update data
+        const updateData = { 
+            title, 
+            description, 
+            date, 
+            location, 
+            imageUrl, 
+            category,
+            ...(subEvents && { subEvents }) // Include subEvents if provided
+        };
+        
         // Only allow status updates to 'completed' for community users
-        const updateData = { title, description, date, location, imageUrl, category };
         if (status === 'completed') {
             updateData.status = status;
         }

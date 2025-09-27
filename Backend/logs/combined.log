@@ -25,3 +25,15 @@
 {"level":"info","message":"SMTP connection verified","timestamp":"2025-09-27 12:02:40"}
 {"envelope":{"from":"tohitk121@gmail.com","to":["xepos67534@rograc.com"]},"level":"info","message":"Email sent successfully:","messageId":"<da1c01c7-dd9f-4bbc-e705-8fb2a20711ea@gmail.com>","response":"250 2.0.0 OK  1758954764 98e67ed59e1d1-33471d73550sm7437675a91.3 - gsmtp","timestamp":"2025-09-27 12:02:44","to":"xepos67534@rograc.com"}
 {"level":"info","message":"Email sent to xepos67534@rograc.com after 1 attempts","timestamp":"2025-09-27 12:02:44"}
+{"level":"info","message":"Queueing email","subject":"Registration Confirmation: education","timestamp":"2025-09-27 12:14:15","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Attempting to send email","subject":"Registration Confirmation: education","timestamp":"2025-09-27 12:14:15","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Email queued successfully","queuePosition":0,"timestamp":"2025-09-27 12:14:15","to":"xepos67534@rograc.com"}
+{"level":"info","message":"SMTP connection verified","timestamp":"2025-09-27 12:14:16"}
+{"envelope":{"from":"tohitk121@gmail.com","to":["xepos67534@rograc.com"]},"level":"info","message":"Email sent successfully:","messageId":"<e8c906d3-6b7a-2e68-439d-c868c7df5635@gmail.com>","response":"250 2.0.0 OK  1758955460 41be03b00d2f7-b57c55bea29sm6172948a12.53 - gsmtp","timestamp":"2025-09-27 12:14:20","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Email sent to xepos67534@rograc.com after 1 attempts","timestamp":"2025-09-27 12:14:20"}
+{"level":"info","message":"Queueing email","subject":"Password reset Request","timestamp":"2025-09-27 12:39:22","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Attempting to send email","subject":"Password reset Request","timestamp":"2025-09-27 12:39:22","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Email queued successfully","queuePosition":0,"timestamp":"2025-09-27 12:39:22","to":"xepos67534@rograc.com"}
+{"level":"info","message":"SMTP connection verified","timestamp":"2025-09-27 12:39:24"}
+{"envelope":{"from":"tohitk121@gmail.com","to":["xepos67534@rograc.com"]},"level":"info","message":"Email sent successfully:","messageId":"<08dd5562-9309-4113-ed28-67be2726dea5@gmail.com>","response":"250 2.0.0 OK  1758956967 98e67ed59e1d1-3355592d5d6sm2939364a91.23 - gsmtp","timestamp":"2025-09-27 12:39:27","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Email sent to xepos67534@rograc.com after 1 attempts","timestamp":"2025-09-27 12:39:27"}
