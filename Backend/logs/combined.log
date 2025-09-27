@@ -18,3 +18,10 @@
 {"level":"info","message":"SMTP connection verified","timestamp":"2025-09-27 11:55:56"}
 {"envelope":{"from":"tohitk121@gmail.com","to":["xepos67534@rograc.com"]},"level":"info","message":"Email sent successfully:","messageId":"<3aef8b0b-5523-b2aa-1ff2-592d3010e2b7@gmail.com>","response":"250 2.0.0 OK  1758954359 d2e1a72fcca58-78102c06af6sm5835698b3a.88 - gsmtp","timestamp":"2025-09-27 11:55:59","to":"xepos67534@rograc.com"}
 {"level":"info","message":"Email sent to xepos67534@rograc.com after 1 attempts","timestamp":"2025-09-27 11:55:59"}
+{"level":"info","message":"Queueing email","subject":"Verify Your Email - PGT Global Networks","timestamp":"2025-09-27 12:01:33","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Queueing email","subject":"Verify Your Email - PGT Global Networks","timestamp":"2025-09-27 12:02:39","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Attempting to send email","subject":"Verify Your Email - PGT Global Networks","timestamp":"2025-09-27 12:02:39","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Email queued successfully","queuePosition":0,"timestamp":"2025-09-27 12:02:39","to":"xepos67534@rograc.com"}
+{"level":"info","message":"SMTP connection verified","timestamp":"2025-09-27 12:02:40"}
+{"envelope":{"from":"tohitk121@gmail.com","to":["xepos67534@rograc.com"]},"level":"info","message":"Email sent successfully:","messageId":"<da1c01c7-dd9f-4bbc-e705-8fb2a20711ea@gmail.com>","response":"250 2.0.0 OK  1758954764 98e67ed59e1d1-33471d73550sm7437675a91.3 - gsmtp","timestamp":"2025-09-27 12:02:44","to":"xepos67534@rograc.com"}
+{"level":"info","message":"Email sent to xepos67534@rograc.com after 1 attempts","timestamp":"2025-09-27 12:02:44"}

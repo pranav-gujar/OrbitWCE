@@ -1,14 +1,14 @@
 import { Field, Form, Formik } from 'formik';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import AuthContext from '../../../AuthContext/AuthContext';
+import { useAuth } from '../../../AuthContext/AuthContext';
 import PasswordStrength from '../../../Components/PasswordStrength/PasswordStrength';
 import { showError, showSuccess } from '../../../utils/toast';
 import { registerSchema, validateForm } from '../../../utils/validationSchemas';
 
 const Register = () => {
 
-    const { handleSubmit } = useContext(AuthContext);
+    const { handleSubmit } = useAuth();
     const navigate = useNavigate();
     const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
 
@@ -23,27 +23,15 @@ const Register = () => {
             };
             console.log('Data being sent to backend:', dataToSend);
             
-            // Using direct fetch instead of handleSubmit to avoid auth path prefix issues
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dataToSend)
-            });
+            // Use the handleSubmit function from AuthContext
+            const result = await handleSubmit('/register', dataToSend);
             
-            const data = await response.json();
-            const status = response.status;
-            const message = data.message;
-
-            if (status === 201) {
-                showSuccess(message || 'Registration successful! Please check your email for OTP verification.');
+            if (result) {
+                showSuccess('Registration successful! Please check your email for OTP verification.');
                 resetForm();
                 
                 // Navigate to OTP verification page with email in state
                 navigate('/verify-email-otp', { state: { email: dataToSend.email } });
-            } else {
-                showError(message || 'Registration failed. Please try again.');
             }
         } catch (error) {
             showError(error.message || 'An error occurred during registration');
