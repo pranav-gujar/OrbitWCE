@@ -76,8 +76,16 @@ const userRegistration = async (req, res) => {
             <p>Please enter this code on the verification page to complete your registration.</p>
         `;
 
-        // Send Email 
-        await sendEmail(user.email, 'Verify Your Email', emailContent);
+        try {
+            // Send Email 
+            console.log('Sending verification email to:', user.email);
+            await sendEmail(user.email, 'Verify Your Email', emailContent);
+            console.log('Verification email sent successfully');
+        } catch (emailError) {
+            console.error('Failed to send verification email:', emailError);
+            // Don't fail the registration if email sending fails, just log it
+            // The user can request a new verification email later
+        }
 
         // response send client side 
         const responseUser = {
