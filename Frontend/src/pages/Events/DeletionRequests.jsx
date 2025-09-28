@@ -184,12 +184,7 @@ const DeletionRequests = () => {
                   </div>
 
                   <div className="mt-6 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
-                    <button
-                      className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                      onClick={() => handleApproval(event._id, false)}
-                    >
-                      Reject Deletion
-                    </button>
+                   
                     <button
                       className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                       onClick={() => handleApproval(event._id, true)}

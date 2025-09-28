@@ -150,21 +150,22 @@ const Permissions = () => {
               </div>
             ) : (
               <table className="min-w-full divide-y divide-gray-200">
+                <colgroup><col className="w-2/5" /><col className="w-1/6" /><col className="w-1/6" /><col className="w-1/6" /><col className="w-1/6" /></colgroup>
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Event
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Date
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Creator
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-2 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -172,8 +173,8 @@ const Permissions = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredEvents.map((event) => (
                     <tr key={event._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
+                      <td className="px-4 py-3 max-w-xs">
+                        <div className="flex items-center min-w-0">
                           <div className="flex-shrink-0 h-10 w-10">
                             <img 
                               className="h-10 w-10 rounded-full object-cover" 
@@ -181,13 +182,13 @@ const Permissions = () => {
                               alt={event.title} 
                             />
                           </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{event.title}</div>
-                            <div className="text-sm text-gray-500 line-clamp-1">{event.description}</div>
+                          <div className="ml-3 min-w-0">
+                            <div className="text-sm font-medium text-gray-900 truncate">{event.title}</div>
+                            <div className="text-sm text-gray-500 truncate">{event.description}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-2 py-3 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
                           {new Date(event.date).toLocaleDateString('en-US', {
                             year: 'numeric',
@@ -195,23 +196,23 @@ const Permissions = () => {
                             day: 'numeric'
                           })}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-xs text-gray-500">
                           {new Date(event.date).toLocaleTimeString('en-US', {
                             hour: '2-digit',
                             minute: '2-digit'
                           })}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{event.creator?.name || 'Unknown'}</div>
-                        <div className="text-sm text-gray-500">{event.creator?.email || ''}</div>
+                      <td className="px-2 py-3 whitespace-nowrap">
+                        <div className="text-sm text-gray-900 truncate">{event.creator?.name || 'Unknown'}</div>
+                        <div className="text-xs text-gray-500 truncate">{event.creator?.email || ''}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-2 py-3 whitespace-nowrap">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${event.status === 'approved' ? 'bg-green-100 text-green-800' : event.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
                           {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className="px-2 py-3 whitespace-nowrap text-right text-sm font-medium">
                         {event.status === 'pending' && (
                           <div className="flex justify-end space-x-2">
                             <button

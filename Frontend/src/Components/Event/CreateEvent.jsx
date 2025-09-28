@@ -1,8 +1,87 @@
 import { motion } from 'framer-motion';
-import { useContext, useEffect, useState } from 'react';
-import { FaCalendarAlt, FaImage, FaLink, FaMapMarkerAlt, FaPlus, FaTrash, FaUserFriends, FaUpload } from 'react-icons/fa';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { FaCalendarAlt, FaImage, FaLink, FaMapMarkerAlt, FaPlus, FaTrash, FaUserFriends, FaUpload, FaMagic } from 'react-icons/fa';
+import { createWorker } from 'tesseract.js';
 import AuthContext from '../../AuthContext/AuthContext';
-import { showError, showSuccess } from '../../utils/toast';
+import { showError, showSuccess, showInfo } from '../../utils/toast';
+
+// Helper function to load OpenCV
+const loadOpenCV = () => {
+  return new Promise((resolve) => {
+    if (window.cv) {
+      resolve(true);
+    } else {
+      const script = document.createElement('script');
+      script.src = 'https://docs.opencv.org/4.5.5/opencv.js';
+      script.async = true;
+      script.onload = () => {
+        // Wait for OpenCV to be ready
+        const checkCV = setInterval(() => {
+          if (window.cv) {
+            clearInterval(checkCV);
+            resolve(true);
+          }
+        }, 100);
+      };
+      script.onerror = () => {
+        console.error('Failed to load OpenCV');
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    }
+  });
+};
+
+// Preprocess image with OpenCV
+const preprocessImage = async (imageUrl) => {
+  try {
+    // Load the image
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.src = imageUrl;
+    
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+    });
+    
+    // Create canvas
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    
+    // Draw image on canvas
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+    
+    // Convert to OpenCV format
+    const src = cv.imread(canvas);
+    const dst = new cv.Mat();
+    
+    // Convert to grayscale
+    cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY);
+    
+    // Apply thresholding
+    cv.threshold(dst, dst, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU);
+    
+    // Apply slight blur to reduce noise
+    const ksize = new cv.Size(3, 3);
+    cv.GaussianBlur(dst, dst, ksize, 0);
+    
+    // Convert back to image URL
+    cv.imshow(canvas, dst);
+    const processedImageUrl = canvas.toDataURL('image/jpeg', 1.0);
+    
+    // Clean up
+    src.delete();
+    dst.delete();
+    
+    return processedImageUrl;
+  } catch (error) {
+    console.error('Error in image preprocessing:', error);
+    return imageUrl; // Return original if preprocessing fails
+  }
+};
 
 const CreateEvent = ({ onEventCreated, editingEvent }) => {
   const { handleSubmit, user } = useContext(AuthContext);
@@ -20,6 +99,9 @@ const CreateEvent = ({ onEventCreated, editingEvent }) => {
     links: [{ title: '', url: '', uploadedFileUrl: '', isFile: false }],
     subEvents: []
   });
+  
+  const [isExtractingText, setIsExtractingText] = useState(false);
+  const fileInputRef = useRef(null);
   
   // State for a new sub-event
   const [subEvent, setSubEvent] = useState({
@@ -288,6 +370,307 @@ const CreateEvent = ({ onEventCreated, editingEvent }) => {
     }));
   };
 
+  // Extract text from image using Tesseract.js with OpenCV preprocessing
+  const extractTextFromImage = async (imageUrl) => {
+    setIsExtractingText(true);
+    showInfo('Processing image for better text recognition...');
+    
+    try {
+      // Load OpenCV
+      const openCvLoaded = await loadOpenCV();
+      let processedImageUrl = imageUrl;
+      
+      // Preprocess image with OpenCV if available
+      if (openCvLoaded) {
+        showInfo('Enhancing image for better text recognition...');
+        processedImageUrl = await preprocessImage(imageUrl);
+      }
+      
+      showInfo('Extracting text from image...');
+      console.log('Starting Tesseract worker...');
+      const worker = await createWorker('eng');
+      
+      // Configure Tesseract for better recognition
+      await worker.setParameters({
+        tessedit_pageseg_mode: '6', // Assume a single uniform block of text
+        tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;-/()@&$"\'!?',
+        preserve_interword_spaces: '1',
+      });
+      
+      console.log('Worker created, recognizing text...');
+      const { data: { text } } = await worker.recognize(processedImageUrl);
+      await worker.terminate();
+      
+      console.log('=== EXTRACTED TEXT ===');
+      console.log(text);
+      console.log('=== END EXTRACTED TEXT ===');
+      
+      if (!text || text.trim().length === 0) {
+        console.error('No text was extracted from the image');
+        showError('Could not extract any text from the image. Please try another image or enter details manually.');
+        return null;
+      }
+      
+      // Common event categories to look for
+      const commonCategories = [
+        'conference', 'workshop', 'seminar', 'meetup', 'hackathon',
+        'exhibition', 'concert', 'festival', 'webinar', 'competition',
+        'tech talk', 'networking', 'convention', 'symposium', 'summit',
+        'expo', 'fair', 'show', 'performance', 'gala', 'award', 'party'
+      ];
+      
+      // Common location words to look for
+      const locationKeywords = [
+        'hall', 'center', 'theater', 'auditorium', 'stadium', 'convention',
+        'university', 'college', 'school', 'hotel', 'restaurant', 'cafe',
+        'bar', 'club', 'garden', 'park', 'plaza', 'mall', 'library', 'lobby',
+        'room', 'theatre', 'arena', 'stadium', 'field', 'ground', 'lounge'
+      ];
+      
+      // Common date indicators
+      const dateIndicators = ['date', 'when', 'time', 'on', 'at', 'from', 'to'];
+      
+      // Common location indicators
+      const locationIndicators = ['venue', 'location', 'place', 'where', 'address', 'at'];
+      
+      // Common category indicators
+      const categoryIndicators = ['type', 'category', 'event type', 'event category', 'kind', 'format'];
+      
+      // Helper function to find value after indicators
+      const findValueAfterIndicators = (text, indicators) => {
+        const lines = text.split('\n').map(line => line.trim());
+        
+        // First, check if any line starts with an indicator
+        for (const line of lines) {
+          const lowerLine = line.toLowerCase();
+          for (const indicator of indicators) {
+            if (lowerLine.startsWith(indicator.toLowerCase() + ':')) {
+              return line.substring(indicator.length + 1).trim();
+            } else if (lowerLine.startsWith(indicator.toLowerCase() + ' ')) {
+              return line.substring(indicator.length).trim();
+            }
+          }
+        }
+        
+        // Then check for indicators within lines
+        for (const line of lines) {
+          const lowerLine = line.toLowerCase();
+          for (const indicator of indicators) {
+            const idx = lowerLine.indexOf(indicator.toLowerCase() + ':');
+            if (idx !== -1) {
+              return line.substring(idx + indicator.length + 1).trim();
+            }
+          }
+        }
+        
+        return null;
+      };
+      
+      // Parse the extracted text to find relevant information
+      const lines = text.split('\n').filter(line => line.trim() !== '');
+      
+      console.log('Found', lines.length, 'non-empty lines of text');
+      
+      // Initialize with current form data
+      const extractedData = {
+        title: formData.title,
+        description: formData.description,
+        date: formData.date,
+        location: formData.location,
+        category: formData.category
+      };
+      
+      console.log('Initial form data:', extractedData);
+      
+      // Try to find title first (first non-empty line)
+      if (lines.length > 0 && !formData.title) {
+        extractedData.title = lines[0].trim();
+        console.log('Set title from first line:', extractedData.title);
+      }
+      
+      // Try to find date using indicators first
+      console.log('Looking for date indicators in text...');
+      const dateFromIndicators = findValueAfterIndicators(text, dateIndicators);
+      if (dateFromIndicators) {
+        console.log('Found date from indicators:', dateFromIndicators);
+        try {
+          // First try parsing as is
+          let date = new Date(dateFromIndicators);
+          
+          // If that fails, try cleaning up the date string
+          if (isNaN(date.getTime())) {
+            // Remove ordinal indicators (st, nd, rd, th)
+            const cleanedDate = dateFromIndicators
+              .replace(/(\d+)(st|nd|rd|th)/g, '$1')
+              .replace(/\s+/g, ' ')
+              .trim();
+            date = new Date(cleanedDate);
+          }
+          
+          if (!isNaN(date.getTime())) {
+            extractedData.date = date.toISOString().slice(0, 16);
+            console.log('Successfully parsed date:', extractedData.date);
+          } else {
+            console.log('Invalid date format from indicators');
+          }
+        } catch (e) {
+          console.log('Date parsing error from indicators:', e);
+        }
+      } else {
+        console.log('No date found using indicators');
+      }
+      
+      // If no date found from indicators, try patterns
+      if (!extractedData.date) {
+        const datePatterns = [
+          // Full month name with day and year (e.g., September 23, 2023 or September 23rd, 2023)
+          /\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:st|nd|rd|th)?[,\s]*\d{4}\b/i,
+          // Abbreviated month with day and year (e.g., Sep 23, 2023 or Sep 23rd, 2023)
+          /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:st|nd|rd|th)?[,\s]*\d{4}\b/i,
+          // YYYY-MM-DD
+          /\b(20\d{2}[-/](0[1-9]|1[0-2])[-/](0[1-9]|[12]\d|3[01]))\b/,
+          // DD/MM/YYYY or DD-MM-YYYY
+          /\b((0[1-9]|[12]\d|3[01])[-/](0[1-9]|1[0-2])[-/]20\d{2})\b/,
+          // Just year
+          /\b(20\d{2})\b/
+        ];
+        
+        for (const pattern of datePatterns) {
+          const match = text.match(pattern);
+          if (match && match[0]) {
+            try {
+              // Clean up the date string by removing ordinal indicators and extra spaces
+              const cleanDateStr = match[0]
+                .replace(/(\d+)(st|nd|rd|th)/g, '$1')
+                .replace(/\s+/g, ' ')
+                .replace(/,/g, '')
+                .trim();
+                
+              const date = new Date(cleanDateStr);
+              if (!isNaN(date.getTime())) {
+                extractedData.date = date.toISOString().slice(0, 16);
+                console.log('Found date from pattern:', match[0], '->', extractedData.date);
+                break;
+              }
+            } catch (e) {
+              console.log('Date parsing error from pattern:', e);
+            }
+          }
+        }
+      }
+      
+      // If we still don't have a date, try to find and parse any date-like string
+      if (!extractedData.date) {
+        // Look for month names followed by a day number
+        const monthDayPattern = /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:st|nd|rd|th)?/i;
+        const monthDayMatch = text.match(monthDayPattern);
+        
+        if (monthDayMatch) {
+          try {
+            // Add current year if no year is specified
+            const currentYear = new Date().getFullYear();
+            const dateStr = `${monthDayMatch[0]} ${currentYear}`.replace(/(\d+)(st|nd|rd|th)/g, '$1');
+            const date = new Date(dateStr);
+            
+            if (!isNaN(date.getTime())) {
+              extractedData.date = date.toISOString().slice(0, 16);
+              console.log('Found month-day date:', monthDayMatch[0], '->', extractedData.date);
+            }
+          } catch (e) {
+            console.log('Error parsing month-day date:', e);
+          }
+        }
+      }
+      
+      // Try to find location using indicators first
+      const locationFromIndicators = findValueAfterIndicators(text, locationIndicators);
+      if (locationFromIndicators) {
+        console.log('Found location from indicators:', locationFromIndicators);
+        extractedData.location = locationFromIndicators;
+      }
+      
+      // If no location found from indicators, try patterns and keywords
+      if (!extractedData.location) {
+        // Look for lines containing location keywords
+        for (const line of lines) {
+          const lowerLine = line.toLowerCase();
+          
+          // Check if line contains any location keyword
+          const hasLocationKeyword = locationKeywords.some(keyword => 
+            lowerLine.includes(keyword)
+          );
+          
+          // Check if line looks like an address (contains numbers and street words)
+          const looksLikeAddress = /\d+\s+[a-z\s]+(st|nd|rd|th|street|avenue|ave|road|rd|boulevard|blvd|lane|ln|drive|dr)\.?/i.test(line);
+          
+          if (hasLocationKeyword || looksLikeAddress) {
+            extractedData.location = line.trim();
+            console.log('Found location from keywords:', extractedData.location);
+            break;
+          }
+        }
+      }
+      
+      // Try to find category using indicators first
+      const categoryFromIndicators = findValueAfterIndicators(text, categoryIndicators);
+      if (categoryFromIndicators) {
+        console.log('Found category from indicators:', categoryFromIndicators);
+        extractedData.category = categoryFromIndicators;
+      }
+      
+      // If no category found from indicators, try to find in text
+      if (!extractedData.category) {
+        const lowerText = text.toLowerCase();
+        for (const category of commonCategories) {
+          if (lowerText.includes(category)) {
+            // Capitalize first letter
+            extractedData.category = category.charAt(0).toUpperCase() + category.slice(1);
+            console.log('Found category from text:', extractedData.category);
+            break;
+          }
+        }
+      }
+      
+      // Join remaining lines as description if not already set
+      if (!extractedData.description && lines.length > 1) {
+        extractedData.description = lines.slice(1).join('\n').trim();
+        console.log('Set description from remaining text');
+      }
+      
+      // Final check - if we found any data, update the form
+      const foundAnyData = extractedData.title || extractedData.date || 
+                         extractedData.location || extractedData.category;
+      
+      if (foundAnyData) {
+        console.log('Updating form with extracted data:', extractedData);
+        // Update the form state
+        setFormData(prev => ({
+          ...prev,
+          ...extractedData
+        }));
+        showSuccess('Form updated with extracted information!');
+      } else {
+        console.log('No relevant information could be extracted from the image');
+        showInfo('Could not extract event details. Please enter the information manually.');
+      }
+      
+      // Update form data with extracted information
+      setFormData(prev => ({
+        ...prev,
+        ...extractedData
+      }));
+      
+      showSuccess('Text extracted from image!');
+      return extractedData;
+    } catch (error) {
+      console.error('Error extracting text:', error);
+      showError('Failed to extract text from image');
+      return null;
+    } finally {
+      setIsExtractingText(false);
+    }
+  };
+
   // Handle file upload
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -334,6 +717,11 @@ const CreateEvent = ({ onEventCreated, editingEvent }) => {
           imageUrl: fullImageUrl // Also set the URL field
         }));
         showSuccess('Image uploaded successfully!');
+        
+        // After successful upload, offer to extract text
+        if (window.confirm('Would you like to extract text from this image to fill the form?')) {
+          await extractTextFromImage(fullImageUrl);
+        }
       } else {
         showError(data.message || 'Failed to upload image');
       }
@@ -852,6 +1240,7 @@ const CreateEvent = ({ onEventCreated, editingEvent }) => {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1">
+                    
                     Prize (optional)
                   </label>
                   <input
