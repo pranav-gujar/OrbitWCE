@@ -65,6 +65,194 @@ Built using the **MERN Stack (MongoDB, Express.js, React.js, Node.js)**, the pla
 - Prettier for code formatting
 - Git for version control
 
+## 📁 Project Structure
+
+```
+OrbitWCE/
+├── .gitattributes
+├── Backend/
+│   ├── .DS_Store
+│   ├── .gitignore
+│   ├── .vscode/
+│   │   └── settings.json
+│   ├── checkAllUsers.js
+│   ├── checkExistingUsers.js
+│   ├── checkRoleValues.js
+│   ├── COMMUNITY_ROLES_GUIDE.md
+│   ├── config/
+│   │   └── database.js
+│   ├── controllers/
+│   │   ├── controller-email.js
+│   │   ├── controller-user.js
+│   │   ├── eventController.js
+│   │   ├── eventRegistrationController.js
+│   │   ├── notificationController.js
+│   │   ├── profileController.js
+│   │   ├── reportController.js
+│   │   ├── uploadController.js
+│   │   └── userController.js
+│   ├── logs/
+│   │   ├── combined.log
+│   │   ├── error.log
+│   │   └── exceptions.log
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   └── roleMiddleware.js
+│   ├── models/
+│   │   ├── Event.js
+│   │   ├── Notification.js
+│   │   ├── Report.js
+│   │   └── User.js
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   ├── eventRegistrationRoutes.js
+│   │   ├── eventRoutes.js
+│   │   ├── notificationRoutes.js
+│   │   ├── reportRoutes.js
+│   │   ├── uploadRoutes.js
+│   │   └── userRoutes.js
+│   ├── scripts/
+│   │   ├── seedCommunityRoles.js
+│   │   ├── seedSuperAdmin.js
+│   │   ├── updateByEmail.js
+│   │   ├── updateCommunityRoles.js
+│   │   └── updateExistingRoles.js
+│   ├── server.js
+│   ├── updateCommunityRolesToCommunity.js
+│   ├── uploads
+│   └── utils/
+│       ├── emailQueue.js
+│       ├── errorHandler.js
+│       ├── logger.js
+│       ├── otpService.js
+│       └── sendEmail/
+│           └── sendEmail.js
+├── Event Poster.png
+├── Frontend/
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public/
+│   │   ├── Background.jpg
+│   │   ├── forget_&_reset.png
+│   │   ├── hero.png
+│   │   ├── login_&_verify.png
+│   │   ├── logo.png
+│   │   ├── PGT.png
+│   │   ├── ProjectIcon.png
+│   │   ├── ProjectLogo.png
+│   │   ├── register.png
+│   │   └── vite.svg
+│   ├── README.md
+│   ├── src/
+│   │   ├── App.css
+│   │   ├── App.jsx
+│   │   ├── assets/
+│   │   │   ├── react.svg
+│   │   │   └── team/
+│   │   │       ├── deepmala.jpg
+│   │   │       ├── mentor.jpeg
+│   │   │       ├── pranav.jpg
+│   │   │       └── rutuja.jpg
+│   │   ├── AuthContext/
+│   │   │   └── AuthContext.jsx
+│   │   ├── AuthProvider/
+│   │   │   └── AuthProvider.jsx
+│   │   ├── Components/
+│   │   │   ├── Event/
+│   │   │   │   ├── CreateEvent.jsx
+│   │   │   │   └── Event.jsx
+│   │   │   ├── Footer/
+│   │   │   │   └── Footer.jsx
+│   │   │   ├── Loader/
+│   │   │   │   └── Loader.jsx
+│   │   │   ├── Modal/
+│   │   │   │   └── Modal.jsx
+│   │   │   ├── Navbar/
+│   │   │   │   └── Navbar.jsx
+│   │   │   ├── Notification/
+│   │   │   │   └── NotificationIndicator.jsx
+│   │   │   ├── PasswordStrength/
+│   │   │   │   └── PasswordStrength.jsx
+│   │   │   ├── ProfileDropdown/
+│   │   │   │   └── ProfileDropdown.jsx
+│   │   │   ├── ProtectedRoutes/
+│   │   │   │   ├── SuperAdminRoute.jsx
+│   │   │   │   └── UserRoute.jsx
+│   │   │   └── ScrollToTop/
+│   │   │       ├── ScrollToTop.jsx
+│   │   │       └── ScrollToTopButton.jsx
+│   │   ├── Hooks/
+│   │   │   ├── useAxiosInstance.jsx
+│   │   │   └── useNavigationWithLoader.js
+│   │   ├── index.css
+│   │   ├── main.jsx
+│   │   ├── pages/
+│   │   │   ├── About/
+│   │   │   │   └── About.jsx
+│   │   │   ├── Auth/
+│   │   │   │   ├── ForgetPassword/
+│   │   │   │   │   └── ForgetPassword.jsx
+│   │   │   │   ├── Login/
+│   │   │   │   │   └── Login.jsx
+│   │   │   │   ├── Register/
+│   │   │   │   │   └── Register.jsx
+│   │   │   │   ├── ResetPassword/
+│   │   │   │   │   └── ResetPassword.jsx
+│   │   │   │   ├── VerifyEmail/
+│   │   │   │   │   └── VerifyEmail.jsx
+│   │   │   │   └── VerifyOTP/
+│   │   │   │       ├── VerifyEmailOTP.jsx
+│   │   │   │       └── VerifyPasswordOTP.jsx
+│   │   │   ├── Community/
+│   │   │   │   └── CommunityProfile.jsx
+│   │   │   ├── dashboard/
+│   │   │   │   ├── Dashboard.jsx
+│   │   │   │   └── Dashboard.jsx.bak
+│   │   │   ├── Events/
+│   │   │   │   ├── DeletionRequests.jsx
+│   │   │   │   ├── EventDetail.jsx
+│   │   │   │   ├── Events.jsx
+│   │   │   │   └── SuperAdminEvents.jsx
+│   │   │   ├── Home/
+│   │   │   │   └── Home.jsx
+│   │   │   ├── Legal/
+│   │   │   │   ├── PrivacyPolicy.jsx
+│   │   │   │   └── TermsAndConditions.jsx
+│   │   │   ├── Messages/
+│   │   │   │   └── Messages.jsx
+│   │   │   ├── Notifications/
+│   │   │   │   └── Notifications.jsx
+│   │   │   ├── Profile/
+│   │   │   │   ├── Profile.css
+│   │   │   │   ├── Profile.jsx
+│   │   │   │   ├── UserProfileEdit.css
+│   │   │   │   └── UserProfileEdit.jsx
+│   │   │   ├── Reports/
+│   │   │   │   ├── Reports.jsx
+│   │   │   │   ├── Reports.jsx.bak
+│   │   │   │   └── SuperAdminReports.jsx
+│   │   │   └── SuperAdmin/
+│   │   │       ├── DeletionRequests.jsx
+│   │   │       ├── Permissions.jsx
+│   │   │       ├── SuperApp.css
+│   │   │       └── SuperApp.jsx
+│   │   ├── socket.js
+│   │   └── utils/
+│   │       ├── toast.js
+│   │       └── validationSchemas.js
+│   ├── vercel.json
+│   └── vite.config.js
+├── README.md
+└── test-url.html
+
+```
+
 ## 🚀 Getting Started
 
 ### Prerequisites
