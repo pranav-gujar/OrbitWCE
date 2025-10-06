@@ -1,44 +1,43 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { FaUsers, FaCalendarAlt, FaChartLine, FaShieldAlt, FaMobileAlt, FaBell, FaGlobe } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 const features = [
   {
-    icon: <FaUsers className="text-4xl text-red-600 mb-4" />,
-    title: "Community Building",
-    description: "Connect with like-minded individuals and build meaningful relationships within specialized communities."
+    icon: <FaUsers className="text-4xl text-blue-600 mb-4" />,
+    title: "Clubs & Communities Hub",
+    description: "Discover all WCE clubs and communities in one place — from technical to cultural, explore what matches your passion."
   },
   {
-    icon: <FaCalendarAlt className="text-4xl text-red-600 mb-4" />,
+    icon: <FaCalendarAlt className="text-4xl text-blue-600 mb-4" />,
     title: "Event Management",
-    description: "Create, manage, and participate in events with our comprehensive event management tools."
+    description: "Stay updated with every workshop, seminar, and fest at WCE. Register, track, and manage events seamlessly."
   },
   {
-    icon: <FaChartLine className="text-4xl text-red-600 mb-4" />,
-    title: "Growth Opportunities",
-    description: "Access resources and opportunities for personal and professional development."
+    icon: <FaChartLine className="text-4xl text-blue-600 mb-4" />,
+    title: "Student Growth & Engagement",
+    description: "Engage in opportunities that boost your leadership, creativity, and collaboration skills."
   },
   {
-    icon: <FaShieldAlt className="text-4xl text-red-600 mb-4" />,
-    title: "Secure Platform",
-    description: "Your data's security is our top priority with enterprise-grade security measures."
+    icon: <FaShieldAlt className="text-4xl text-blue-600 mb-4" />,
+    title: "Secure & Reliable",
+    description: "Built with modern security standards to ensure safe access for all students and clubs."
   },
   {
-    icon: <FaMobileAlt className="text-4xl text-red-600 mb-4" />,
-    title: "Mobile Friendly",
-    description: "Access the platform on any device with our responsive design."
+    icon: <FaMobileAlt className="text-4xl text-blue-600 mb-4" />,
+    title: "Responsive Design",
+    description: "Access OrbitWCE anytime, anywhere — on desktop or mobile, with an elegant, responsive interface."
   },
   {
-    icon: <FaBell className="text-4xl text-red-600 mb-4" />,
-    title: "Real-time Notifications",
-    description: "Stay updated with instant notifications about community activities and events."
+    icon: <FaBell className="text-4xl text-blue-600 mb-4" />,
+    title: "Instant Notifications",
+    description: "Receive real-time updates about new events, announcements, and opportunities directly from WCE clubs."
   }
 ];
 
 const About = () => {
   return (
-    <div className="min-h-screen  text-white">
+    <div className="min-h-screen text-white">
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto text-center">
@@ -48,31 +47,29 @@ const About = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            About PGT Global Networks
+            About OrbitWCE
           </motion.h1>
           <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto mb-12">
-            Empowering communities through seamless connections and meaningful interactions
+            A unified digital platform for all clubs, communities, and events at Walchand College of Engineering.
           </p>
         </div>
       </section>
 
       {/* Mission Section */}
       <section className="py-16 px-4 bg-gray-800">
-        <div className="container mx-auto">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
-            <p className="text-lg text-gray-300 mb-8">
-              At PGT Global Networks, we believe in the power of community. Our mission is to create a platform where individuals can connect, collaborate, and grow together in a secure and engaging environment.
-            </p>
-           
-          </div>
+        <div className="container mx-auto text-center max-w-4xl">
+          <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
+          <p className="text-lg text-gray-300 mb-8">
+            At OrbitWCE, our mission is to bring every WCE club, event, and student initiative into one connected ecosystem.
+            We aim to simplify event discovery, participation, and collaboration, helping students engage meaningfully beyond academics.
+          </p>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-16">Why Choose PGT Global Networks?</h2>
+          <h2 className="text-3xl font-bold text-center mb-16">Why OrbitWCE?</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <motion.div 
@@ -100,33 +97,31 @@ const About = () => {
           <h2 className="text-3xl font-bold text-center mb-16">How It Works</h2>
           <div className="max-w-4xl mx-auto">
             <div className="relative">
-             
-              
               {[
                 {
                   step: "1",
-                  title: "Create an Account",
-                  description: "Sign up and create your profile to join the PGT Global Networks community."
+                  title: "Sign Up as a Student",
+                  description: "Create your OrbitWCE account using your WCE email and get access to all events and clubs."
                 },
                 {
                   step: "2",
-                  title: "Join Communities",
-                  description: "Discover and join communities that match your interests and goals."
+                  title: "Explore Clubs",
+                  description: "Browse and follow WCE’s clubs and communities — from technical to cultural and social."
                 },
                 {
                   step: "3",
-                  title: "Participate in Events",
-                  description: "Attend virtual or in-person events, webinars, and workshops."
+                  title: "Register for Events",
+                  description: "Join college fests, workshops, and competitions with just one click."
                 },
                 {
                   step: "4",
-                  title: "Connect & Grow",
-                  description: "Network with other members, share knowledge, and grow together."
+                  title: "Connect & Collaborate",
+                  description: "Engage with club members, share experiences, and grow your network at WCE."
                 }
               ].map((item, index) => (
                 <div key={index} className="relative mb-12">
                   <div className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
-                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-xl z-10">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xl z-10">
                       {item.step}
                     </div>
                     <div className={`flex-1 ${index % 2 === 0 ? 'ml-8 text-left' : 'mr-8 text-right'}`}>
@@ -144,16 +139,13 @@ const About = () => {
       {/* CTA Section */}
       <section className="py-20 px-4 text-center">
         <div className="container mx-auto max-w-4xl">
-          <FaGlobe className="text-5xl text-red-600 mx-auto mb-6" />
-          <h2 className="text-3xl font-bold mb-6">Ready to Join Our Global Community?</h2>
+          <FaGlobe className="text-5xl text-blue-600 mx-auto mb-6" />
+          <h2 className="text-3xl font-bold mb-6">Be Part of WCE’s Orbit</h2>
           <p className="text-xl text-gray-300 mb-8">
-            Become part of a growing network of professionals, creators, and innovators from around the world.
+            One hub for every club, event, and opportunity — stay connected with the pulse of WCE campus life.
           </p>
-         
         </div>
       </section>
-
-     
     </div>
   );
 };

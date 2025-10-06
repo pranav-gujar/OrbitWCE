@@ -37,3 +37,130 @@
 {"level":"info","message":"SMTP connection verified","timestamp":"2025-09-27 12:39:24"}
 {"envelope":{"from":"tohitk121@gmail.com","to":["xepos67534@rograc.com"]},"level":"info","message":"Email sent successfully:","messageId":"<08dd5562-9309-4113-ed28-67be2726dea5@gmail.com>","response":"250 2.0.0 OK  1758956967 98e67ed59e1d1-3355592d5d6sm2939364a91.23 - gsmtp","timestamp":"2025-09-27 12:39:27","to":"xepos67534@rograc.com"}
 {"level":"info","message":"Email sent to xepos67534@rograc.com after 1 attempts","timestamp":"2025-09-27 12:39:27"}
+2025-10-03 00:07:31 [[32minfo[39m]: Queueing email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Verify Your Email - PGT Global Networks"
+}
+2025-10-03 00:07:31 [[32minfo[39m]: Attempting to send email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Verify Your Email - PGT Global Networks"
+}
+2025-10-03 00:07:31 [[32minfo[39m]: Email queued successfully {
+  "to": "pranavgujar2005@gmail.com",
+  "queuePosition": 0
+}
+2025-10-03 00:07:33 [[31merror[39m]: Email send error: {
+  "to": "pranavgujar2005@gmail.com",
+  "error": "Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-b6099af38a2sm2523298a12.11 - gsmtp",
+  "code": "EAUTH",
+  "stack": "Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-b6099af38a2sm2523298a12.11 - gsmtp\n    at SMTPConnection._formatError (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:809:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1588:34)\n    at SMTPConnection.<anonymous> (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:556:26)\n    at SMTPConnection._processResponse (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:993:20)\n    at SMTPConnection._onData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:774:14)\n    at SMTPConnection._onSocketData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:195:44)\n    at TLSSocket.emit (node:events:524:28)\n    at addChunk (node:internal/streams/readable:561:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)\n    at Readable.push (node:internal/streams/readable:392:5)",
+  "response": "535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-b6099af38a2sm2523298a12.11 - gsmtp",
+  "command": "AUTH PLAIN"
+}
+2025-10-03 00:07:33 [[32minfo[39m]: Recreating transporter due to connection/auth error 
+2025-10-03 00:07:38 [[32minfo[39m]: Attempting to send email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Verify Your Email - PGT Global Networks"
+}
+2025-10-03 00:07:41 [[31merror[39m]: Email send error: {
+  "to": "pranavgujar2005@gmail.com",
+  "error": "Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-b62ce55205csm157652a12.18 - gsmtp",
+  "code": "EAUTH",
+  "stack": "Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-b62ce55205csm157652a12.18 - gsmtp\n    at SMTPConnection._formatError (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:809:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1588:34)\n    at SMTPConnection.<anonymous> (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:556:26)\n    at SMTPConnection._processResponse (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:993:20)\n    at SMTPConnection._onData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:774:14)\n    at SMTPConnection._onSocketData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:195:44)\n    at TLSSocket.emit (node:events:524:28)\n    at addChunk (node:internal/streams/readable:561:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)\n    at Readable.push (node:internal/streams/readable:392:5)",
+  "response": "535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-b62ce55205csm157652a12.18 - gsmtp",
+  "command": "AUTH PLAIN"
+}
+2025-10-03 00:07:41 [[32minfo[39m]: Recreating transporter due to connection/auth error 
+2025-10-03 00:07:46 [[32minfo[39m]: Attempting to send email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Verify Your Email - PGT Global Networks"
+}
+2025-10-03 00:07:48 [[31merror[39m]: Email send error: {
+  "to": "pranavgujar2005@gmail.com",
+  "error": "Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-b6099f5b7c5sm2490654a12.42 - gsmtp",
+  "code": "EAUTH",
+  "stack": "Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-b6099f5b7c5sm2490654a12.42 - gsmtp\n    at SMTPConnection._formatError (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:809:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1588:34)\n    at SMTPConnection.<anonymous> (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:556:26)\n    at SMTPConnection._processResponse (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:993:20)\n    at SMTPConnection._onData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:774:14)\n    at SMTPConnection._onSocketData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:195:44)\n    at TLSSocket.emit (node:events:524:28)\n    at addChunk (node:internal/streams/readable:561:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)\n    at Readable.push (node:internal/streams/readable:392:5)",
+  "response": "535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-b6099f5b7c5sm2490654a12.42 - gsmtp",
+  "command": "AUTH PLAIN"
+}
+2025-10-03 00:07:48 [[32minfo[39m]: Recreating transporter due to connection/auth error 
+2025-10-03 00:07:48 [[31merror[39m]: Failed to send email to pranavgujar2005@gmail.com after 3 attempts {
+  "error": "Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-b6099f5b7c5sm2490654a12.42 - gsmtp",
+  "lastAttempt": "2025-10-02T18:37:46.337Z"
+}
+2025-10-03 00:09:20 [[32minfo[39m]: Queueing email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Verify Your Email - New Code"
+}
+2025-10-03 00:09:20 [[32minfo[39m]: Attempting to send email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Verify Your Email - New Code"
+}
+2025-10-03 00:09:20 [[32minfo[39m]: Email queued successfully {
+  "to": "pranavgujar2005@gmail.com",
+  "queuePosition": 0
+}
+2025-10-03 00:09:22 [[31merror[39m]: Email send error: {
+  "to": "pranavgujar2005@gmail.com",
+  "error": "Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-28e8d1f25f5sm27583095ad.136 - gsmtp",
+  "code": "EAUTH",
+  "stack": "Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-28e8d1f25f5sm27583095ad.136 - gsmtp\n    at SMTPConnection._formatError (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:809:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1588:34)\n    at SMTPConnection.<anonymous> (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:556:26)\n    at SMTPConnection._processResponse (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:993:20)\n    at SMTPConnection._onData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:774:14)\n    at SMTPConnection._onSocketData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:195:44)\n    at TLSSocket.emit (node:events:524:28)\n    at addChunk (node:internal/streams/readable:561:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)\n    at Readable.push (node:internal/streams/readable:392:5)",
+  "response": "535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-28e8d1f25f5sm27583095ad.136 - gsmtp",
+  "command": "AUTH PLAIN"
+}
+2025-10-03 00:09:22 [[32minfo[39m]: Recreating transporter due to connection/auth error 
+2025-10-03 00:09:27 [[32minfo[39m]: Attempting to send email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Verify Your Email - New Code"
+}
+2025-10-03 00:09:29 [[31merror[39m]: Email send error: {
+  "to": "pranavgujar2005@gmail.com",
+  "error": "Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-78b02090691sm2718126b3a.80 - gsmtp",
+  "code": "EAUTH",
+  "stack": "Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-78b02090691sm2718126b3a.80 - gsmtp\n    at SMTPConnection._formatError (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:809:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1588:34)\n    at SMTPConnection.<anonymous> (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:556:26)\n    at SMTPConnection._processResponse (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:993:20)\n    at SMTPConnection._onData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:774:14)\n    at SMTPConnection._onSocketData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:195:44)\n    at TLSSocket.emit (node:events:524:28)\n    at addChunk (node:internal/streams/readable:561:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)\n    at Readable.push (node:internal/streams/readable:392:5)",
+  "response": "535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-78b02090691sm2718126b3a.80 - gsmtp",
+  "command": "AUTH PLAIN"
+}
+2025-10-03 00:09:29 [[32minfo[39m]: Recreating transporter due to connection/auth error 
+2025-10-03 00:09:34 [[32minfo[39m]: Attempting to send email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Verify Your Email - New Code"
+}
+2025-10-03 00:09:36 [[31merror[39m]: Email send error: {
+  "to": "pranavgujar2005@gmail.com",
+  "error": "Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-78b01fcc45fsm2760936b3a.39 - gsmtp",
+  "code": "EAUTH",
+  "stack": "Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-78b01fcc45fsm2760936b3a.39 - gsmtp\n    at SMTPConnection._formatError (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:809:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1588:34)\n    at SMTPConnection.<anonymous> (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:556:26)\n    at SMTPConnection._processResponse (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:993:20)\n    at SMTPConnection._onData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:774:14)\n    at SMTPConnection._onSocketData (C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:195:44)\n    at TLSSocket.emit (node:events:524:28)\n    at addChunk (node:internal/streams/readable:561:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)\n    at Readable.push (node:internal/streams/readable:392:5)",
+  "response": "535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-78b01fcc45fsm2760936b3a.39 - gsmtp",
+  "command": "AUTH PLAIN"
+}
+2025-10-03 00:09:36 [[32minfo[39m]: Recreating transporter due to connection/auth error 
+2025-10-03 00:09:36 [[31merror[39m]: Failed to send email to pranavgujar2005@gmail.com after 3 attempts {
+  "error": "Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-78b01fcc45fsm2760936b3a.39 - gsmtp",
+  "lastAttempt": "2025-10-02T18:39:34.778Z"
+}
+2025-10-03 00:25:42 [[32minfo[39m]: Queueing email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Verify Your Email - New Code"
+}
+2025-10-03 00:25:42 [[32minfo[39m]: Attempting to send email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Verify Your Email - New Code"
+}
+2025-10-03 00:25:42 [[32minfo[39m]: Email queued successfully {
+  "to": "pranavgujar2005@gmail.com",
+  "queuePosition": 0
+}
+2025-10-03 00:25:43 [[32minfo[39m]: SMTP connection verified 
+2025-10-03 00:25:47 [[32minfo[39m]: Email sent successfully: {
+  "to": "pranavgujar2005@gmail.com",
+  "messageId": "<4c30d545-7632-c3e2-8a11-e32da8398cce@gmail.com>",
+  "response": "250 2.0.0 OK  1759431348 d9443c01a7336-28e8d1dc00esm27771965ad.117 - gsmtp",
+  "envelope": {
+    "from": "pranavgujar974@gmail.com",
+    "to": [
+      "pranavgujar2005@gmail.com"
+    ]
+  }
+}
+2025-10-03 00:25:47 [[32minfo[39m]: Email sent to pranavgujar2005@gmail.com after 1 attempts 

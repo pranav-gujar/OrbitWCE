@@ -27,103 +27,144 @@ const updateExistingCommunityRoles = async () => {
         
         // Define the mapping for existing roles to update
         const roleUpdates = [
-            {
-                findBy: { name: 'Community Youth Coordinator' }, // Find by exact name
-                update: {
-                    name: 'Community Youth Coordinator',
-                    email: process.env.COMMUNITY_YOUTH_COORDINATOR_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_YOUTH_COORDINATOR_PASSWORD, saltRounds),
-                }
-            },
-            {
-                findBy: { name: 'Community Education Leader' },
-                update: {
-                    name: 'Community Education Leader',
-                    email: process.env.COMMUNITY_EDUCATION_LEADER_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_EDUCATION_LEADER_PASSWORD, saltRounds),
-                }
-            },
-            {
-                findBy: { name: 'Community Health Advocate' },
-                update: {
-                    name: 'Community Health Advocate',
-                    email: process.env.COMMUNITY_HEALTH_ADVOCATE_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_HEALTH_ADVOCATE_PASSWORD, saltRounds),
-                }
-            },
-            {
-                findBy: { name: 'Community Environmental Lead' },
-                update: {
-                    name: 'Community Environmental Lead',
-                    email: process.env.COMMUNITY_ENVIRONMENTAL_LEAD_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_ENVIRONMENTAL_LEAD_PASSWORD, saltRounds),
-                }
-            },
-            {
-                findBy: { name: 'Community Arts & Culture' },
-                update: {
-                    name: 'Community Arts & Culture',
-                    email: process.env.COMMUNITY_ARTS_CULTURE_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_ARTS_CULTURE_PASSWORD, saltRounds),
-                }
-            },
-            {
-                findBy: { name: 'Community Sports Coordinator' },
-                update: {
-                    name: 'Community Sports Coordinator',
-                    email: process.env.COMMUNITY_SPORTS_COORDINATOR_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_SPORTS_COORDINATOR_PASSWORD, saltRounds),
-                }
-            },
-            {
-                findBy: { name: 'Community Business Leader' },
-                update: {
-                    name: 'Community Business Leader',
-                    email: process.env.COMMUNITY_BUSINESS_LEADER_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_BUSINESS_LEADER_PASSWORD, saltRounds),
-                }
-            },
-            {
-                findBy: { name: 'Community Religious Leader' },
-                update: {
-                    name: 'Community Religious Leader',
-                    email: process.env.COMMUNITY_RELIGIOUS_LEADER_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_RELIGIOUS_LEADER_PASSWORD, saltRounds),
-                }
-            },
-            {
-                findBy: { name: 'Community Social Worker' },
-                update: {
-                    name: 'Community Social Worker',
-                    email: process.env.COMMUNITY_SOCIAL_WORKER_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_SOCIAL_WORKER_PASSWORD, saltRounds),
-                }
-            },
-            {
-                findBy: { name: 'Community Tech Coordinator' },
-                update: {
-                    name: 'Community Tech Coordinator',
-                    email: process.env.COMMUNITY_TECH_COORDINATOR_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_TECH_COORDINATOR_PASSWORD, saltRounds),
-                }
-            },
-            {
-                findBy: { name: 'Community Volunteer Coordinator' },
-                update: {
-                    name: 'Community Volunteer Coordinator',
-                    email: process.env.COMMUNITY_VOLUNTEER_COORDINATOR_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_VOLUNTEER_COORDINATOR_PASSWORD, saltRounds),
-                }
-            },
-            {
-                findBy: { name: 'Community Senior Coordinator' },
-                update: {
-                    name: 'Community Senior Coordinator',
-                    email: process.env.COMMUNITY_SENIOR_COORDINATOR_EMAIL,
-                    password: await bcrypt.hash(process.env.COMMUNITY_SENIOR_COORDINATOR_PASSWORD, saltRounds),
-                }
-            }
-        ];
+    {
+        findBy: { name: 'Rotaract Club Of WCE Sangli' },
+        update: {
+            name: 'Rotaract Club Of WCE Sangli',
+            email: process.env.ROTARACT_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.ROTARACT_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Personality Advancement Circle of Engineers(PACE)' },
+        update: {
+            name: 'Personality Advancement Circle of Engineers(PACE)',
+            email: process.env.PACE_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.PACE_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Google Developer Groups(GDG WCE)' },
+        update: {
+            name: 'Google Developer Groups(GDG WCE)',
+            email: process.env.GDG_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.GDG_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'ACM WCE Chapter' },
+        update: {
+            name: 'ACM WCE Chapter',
+            email: process.env.ACM_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.ACM_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Art Circle' },
+        update: {
+            name: 'Art Circle',
+            email: process.env.ART_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.ART_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Microsoft Learn Students Club(WCE MLSC)' },
+        update: {
+            name: 'Microsoft Learn Students Club(WCE MLSC)',
+            email: process.env.MLSC_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.MLSC_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Walchand Linux User Group(WLUG)' },
+        update: {
+            name: 'Walchand Linux User Group(WLUG)',
+            email: process.env.WLUG_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.WLUG_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'ACSES Coordinator' },
+        update: {
+            name: 'ACSES Coordinator',
+            email: process.env.ACSES_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.ACSES_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Electrical Engineering Students Association(EESA)' },
+        update: {
+            name: 'Electrical Engineering Students Association(EESA)',
+            email: process.env.EESA_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.EESA_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Electronics Engineering Students Association(ELESA)' },
+        update: {
+            name: 'Electronics Engineering Students Association(ELESA)',
+            email: process.env.ELESA_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.ELESA_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Civil Engineering Students Association(CESA)' },
+        update: {
+            name: 'Civil Engineering Students Association(CESA)',
+            email: process.env.CESA_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.CESA_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Students Association of Information technology(SAIT)' },
+        update: {
+            name: 'Students Association of Information technology(SAIT)',
+            email: process.env.SAIT_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.SAIT_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Mechanical Engineering Students Association(MESA)' },
+        update: {
+            name: 'Mechanical Engineering Students Association(MESA)',
+            email: process.env.MESA_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.MESA_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Association of Students for Theoretical Reasoning in AI(ASTRA)' },
+        update: {
+            name: 'Association of Students for Theoretical Reasoning in AI(ASTRA)',
+            email: process.env.ASTRA_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.ASTRA_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Student Organization For Technical Activities(SOFTA)' },
+        update: {
+            name: 'Student Organization For Technical Activities(SOFTA)',
+            email: process.env.SOFTA_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.SOFTA_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'CodeChef WCE Chapter(CodeChef)' },
+        update: {
+            name: 'CodeChef WCE Chapter(CodeChef)',
+            email: process.env.CODECHEF_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.CODECHEF_COORDINATOR_PASSWORD, saltRounds),
+        }
+    },
+    {
+        findBy: { name: 'Team Vulcan Robotics' },
+        update: {
+            name: 'Team Vulcan Robotics',
+            email: process.env.VULCAN_COORDINATOR_EMAIL,
+            password: await bcrypt.hash(process.env.VULCAN_COORDINATOR_PASSWORD, saltRounds),
+        }
+    }
+];
+
 
         // Update each existing role
         for (const roleUpdate of roleUpdates) {

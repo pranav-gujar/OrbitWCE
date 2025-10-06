@@ -1,6 +1,16 @@
-# Community & Event Management System
+# 🌐 OrbitWCE — Community & Event Management System  
 
-A comprehensive platform for managing communities, events, and user interactions. This full-stack application provides features for user authentication, event management, community engagement, and real-time notifications.
+> **Connecting Clubs. Empowering Students. Building the WCE Ecosystem.**  
+
+OrbitWCE is a comprehensive **Community & Event Management Platform** developed for **Walchand College of Engineering, Sangli**.  
+
+It unifies all student clubs, communities, and technical organizations under one digital ecosystem — making it easy to manage events, memberships, and collaborations.
+
+## 🚀 Overview  
+
+OrbitWCE streamlines event management, communication, and collaboration across all 17 student clubs of WCE.  
+Built using the **MERN Stack (MongoDB, Express.js, React.js, Node.js)**, the platform provides an efficient, secure, and interactive experience for both coordinators and students.
+
 
 ## 🌟 Features
 
@@ -66,8 +76,8 @@ A comprehensive platform for managing communities, events, and user interactions
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/community-event-management-system.git
-   cd community-event-management-system
+   git clone https://github.com/pranav-gujar/OrbitWCE.git
+   cd OrbitWCE
    ```
 
 2. Install backend dependencies:
@@ -127,23 +137,9 @@ node scripts/seedSuperAdmin.js
 
 API documentation is available at `/api-docs` when running the development server.
 
-## 🤝 Contributing
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📫 Contact
-
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter) - your.email@example.com
-
-Project Link: [https://github.com/yourusername/community-event-management-system](https://github.com/yourusername/community-event-management-system)
 
 ## 🙏 Acknowledgments
 

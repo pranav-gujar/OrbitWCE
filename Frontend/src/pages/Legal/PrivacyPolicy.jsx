@@ -3,79 +3,93 @@ import { Link } from 'react-router-dom';
 
 const PrivacyPolicy = () => {
   return (
-    <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto text-gray-200 rounded-xl shadow-md overflow-hidden p-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto text-gray-200 rounded-xl shadow-md overflow-hidden p-8 bg-gray-900">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
-          <p className="text-gray-600">Last updated: {new Date().toLocaleDateString()}</p>
+          <h1 className="text-3xl font-bold text-white mb-4">Privacy Policy</h1>
+          <p className="text-gray-400">Last updated: {new Date().toLocaleDateString()}</p>
         </div>
 
-        <div className="prose max-w-none ">
+        <div className="prose max-w-none">
+          {/* 1. Introduction */}
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">1. Introduction</h2>
-            <p className="text-gray-400 mb-4">
-              Welcome to PGT Global Networks. We respect your privacy and are committed to protecting your personal data. 
-              This privacy policy will inform you about how we look after your personal data when you visit our website 
-              (regardless of where you visit it from) and tell you about your privacy rights and how the law protects you.
+            <h2 className="text-2xl font-semibold text-blue-400 mb-4">1. Introduction</h2>
+            <p className="text-gray-300 mb-4">
+              Welcome to <strong>OrbitWCE</strong> — the official platform for managing clubs, communities, and events at 
+              <strong> Walchand College of Engineering (WCE)</strong>. 
+              We respect your privacy and are committed to protecting your personal information. 
+              This Privacy Policy explains how we collect, use, and safeguard your data when you use our platform.
             </p>
           </section>
 
+          {/* 2. Data We Collect */}
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">2. The Data We Collect About You</h2>
-            <p className="text-gray-400 mb-4">
-              We may collect, use, store, and transfer different kinds of personal data about you which we have grouped together as follows:
+            <h2 className="text-2xl font-semibold text-blue-400 mb-4">2. The Data We Collect About You</h2>
+            <p className="text-gray-300 mb-4">
+              OrbitWCE collects limited personal data necessary to help you register for events, connect with clubs, and manage your activities effectively.
             </p>
-            <ul className="list-disc pl-6 text-gray-400 space-y-2 mb-4">
-              <li><strong>Identity Data</strong> includes first name, last name, username or similar identifier.</li>
-              <li><strong>Contact Data</strong> includes email address and telephone numbers.</li>
-              <li><strong>Technical Data</strong> includes internet protocol (IP) address, browser type and version, time zone setting and location, browser plug-in types and versions, operating system and platform, and other technology on the devices you use to access this website.</li>
-              <li><strong>Usage Data</strong> includes information about how you use our website, products, and services.</li>
-              <li><strong>Marketing and Communications Data</strong> includes your preferences in receiving marketing from us and our third parties and your communication preferences.</li>
+            <ul className="list-disc pl-6 text-gray-300 space-y-2 mb-4">
+              <li><strong>Identity Data:</strong> name, student ID, college name, and profile photo.</li>
+              <li><strong>Contact Data:</strong> email address and phone number.</li>
+              <li><strong>Academic Data:</strong> branch, year, and degree (used for event registrations).</li>
+              <li><strong>Event Data:</strong> information about events you register for, like, or participate in.</li>
+              <li><strong>Technical Data:</strong> IP address, browser type, and device information for platform performance and security.</li>
             </ul>
           </section>
 
+          {/* 3. How We Use Data */}
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">3. How We Use Your Data</h2>
-            <p className="text-gray-400 mb-4">
-              We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:
+            <h2 className="text-2xl font-semibold text-blue-400 mb-4">3. How We Use Your Data</h2>
+            <p className="text-gray-300 mb-4">
+              We only use your personal data to enhance your experience within the WCE ecosystem. Specifically:
             </p>
-            <ul className="list-disc pl-6 text-gray-400 space-y-2 mb-4">
-              <li>To register you as a new customer.</li>
-              <li>To process and deliver your orders including managing payments, fees, and charges.</li>
-              <li>To manage our relationship with you.</li>
-              <li>To enable you to participate in a prize draw, competition, or complete a survey.</li>
-              <li>To improve our website, products/services, marketing, or customer relationships.</li>
-              <li>To recommend products or services that may be of interest to you.</li>
+            <ul className="list-disc pl-6 text-gray-300 space-y-2 mb-4">
+              <li>To help you register for and manage participation in college events.</li>
+              <li>To verify student identities for event access and certifications.</li>
+              <li>To notify you about upcoming events, announcements, and updates.</li>
+              <li>To improve the OrbitWCE platform for smoother performance and user experience.</li>
+              <li>To generate event reports and analytics for clubs and administration.</li>
             </ul>
           </section>
 
+          {/* 4. Data Security */}
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">4. Data Security</h2>
-            <p className="text-gray-400 mb-4">
-              We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way, altered, or disclosed. In addition, we limit access to your personal data to those employees, agents, contractors, and other third parties who have a business need to know.
+            <h2 className="text-2xl font-semibold text-blue-400 mb-4">4. Data Security</h2>
+            <p className="text-gray-300 mb-4">
+              We prioritize your data’s safety. All stored data is protected using secure authentication systems, 
+              encrypted passwords, and limited access control. Only authorized WCE administrators and club heads 
+              can access relevant event data.
             </p>
           </section>
 
+          {/* 5. Your Rights */}
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">5. Your Legal Rights</h2>
-            <p className="text-gray-400 mb-4">
-              Under certain circumstances, you have rights under data protection laws in relation to your personal data, including the right to:
+            <h2 className="text-2xl font-semibold text-blue-400 mb-4">5. Your Rights</h2>
+            <p className="text-gray-300 mb-4">
+              As a user of OrbitWCE, you have the right to:
             </p>
-            <ul className="list-disc pl-6 text-gray-400 space-y-2 mb-4">
-              <li>Request access to your personal data.</li>
-              <li>Request correction of your personal data.</li>
-              <li>Request erasure of your personal data.</li>
-              <li>Object to processing of your personal data.</li>
-              <li>Request restriction of processing your personal data.</li>
-              <li>Request transfer of your personal data.</li>
-              <li>Right to withdraw consent.</li>
+            <ul className="list-disc pl-6 text-gray-300 space-y-2 mb-4">
+              <li>Request access to view or update your personal information.</li>
+              <li>Request deletion of your account and related data.</li>
+              <li>Withdraw consent to receive notifications or emails.</li>
+              <li>Report any misuse or security concerns regarding your data.</li>
             </ul>
+            <p className="text-gray-300 mb-4">
+              To exercise any of these rights, you can contact the OrbitWCE Admin or WCE’s technical coordinator.
+            </p>
           </section>
 
-         
+          {/* 6. Policy Updates */}
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-blue-400 mb-4">6. Updates to This Policy</h2>
+            <p className="text-gray-300 mb-4">
+              OrbitWCE may update this Privacy Policy periodically to reflect new features or regulatory changes. 
+              All updates will be posted here with a new “Last Updated” date.
+            </p>
+          </section>
 
-          <div className="mt-12 pt-6 border-t border-gray-200">
-            <Link to="/" className="text-indigo-600 hover:text-indigo-800 font-medium">
+          <div className="mt-12 pt-6 border-t border-gray-700">
+            <Link to="/" className="text-blue-400 hover:text-blue-500 font-medium">
               ← Back to Home
             </Link>
           </div>

@@ -64,12 +64,12 @@ const updateByCurrentEmail = async (currentEmail, newEmail, newPassword) => {
     }
 };
 
-// Function to update Community Youth Coordinator specifically
+// Function to update Rotaract Club Of WCE Sangli specifically
 const updateCommunityYouthCoordinator = async () => {
     return await updateByCurrentEmail(
-        'youth@community.org',           // Current email
-        process.env.COMMUNITY_YOUTH_COORDINATOR_EMAIL,  // New email from .env
-        process.env.COMMUNITY_YOUTH_COORDINATOR_PASSWORD  // New password from .env
+        'rotaract@walchandsangli.ac.in',           // Current email
+        process.env.ROTARACT_COORDINATOR_EMAIL,  // New email from .env
+        process.env.ROTARACT_COORDINATOR_PASSWORD  // New password from .env
     );
 };
 

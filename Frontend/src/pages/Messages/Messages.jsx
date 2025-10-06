@@ -85,7 +85,7 @@ const Messages = () => {
               <div className="flex items-start">
                 <FaInfoCircle className="flex-shrink-0 mt-1 mr-3 text-indigo-400" />
                 <p className="text-sm text-gray-300">
-                  Example: <span className="text-white font-medium">"Recruitment for Assistant Board in Community 4 is now open. Apply now!"</span>
+                  Example: <span className="text-white font-medium">"Recruitment for Assistant Board in Rotaract Club is now open. Apply now!"</span>
                 </p>
               </div>
             </motion.div>

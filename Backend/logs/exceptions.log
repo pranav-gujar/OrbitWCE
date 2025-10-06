@@ -54,3 +54,57 @@ ReferenceError: logger is not defined
 }
 {"date":"Sat Sep 27 2025 11:55:54 GMT+0530 (India Standard Time)","error":{},"exception":true,"level":"error","message":"uncaughtException: logger is not defined\nReferenceError: logger is not defined\n    at /Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/controllers/controller-user.js:117:13\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","os":{"loadavg":[4.07177734375,3.8466796875,3.50146484375],"uptime":2468820},"process":{"argv":["/usr/local/bin/node","/Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/server.js"],"cwd":"/Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend","execPath":"/usr/local/bin/node","gid":20,"memoryUsage":{"arrayBuffers":18329435,"external":20695210,"heapTotal":32292864,"heapUsed":29364904,"rss":47923200},"pid":69911,"uid":501,"version":"v22.14.0"},"stack":"ReferenceError: logger is not defined\n    at /Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/controllers/controller-user.js:117:13\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","timestamp":"2025-09-27 11:55:54","trace":[{"column":13,"file":"/Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/controllers/controller-user.js","function":null,"line":117,"method":null,"native":false},{"column":5,"file":"node:internal/process/task_queues","function":"process.processTicksAndRejections","line":105,"method":"processTicksAndRejections","native":false}]}
 {"date":"Sat Sep 27 2025 12:02:39 GMT+0530 (India Standard Time)","error":{},"exception":true,"level":"error","message":"uncaughtException: logger is not defined\nReferenceError: logger is not defined\n    at /Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/controllers/controller-user.js:117:13\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","os":{"loadavg":[3.07666015625,3.4072265625,3.47314453125],"uptime":2469225},"process":{"argv":["/usr/local/bin/node","/Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/server.js"],"cwd":"/Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend","execPath":"/usr/local/bin/node","gid":20,"memoryUsage":{"arrayBuffers":18321243,"external":20687018,"heapTotal":32292864,"heapUsed":29604136,"rss":70041600},"pid":70333,"uid":501,"version":"v22.14.0"},"stack":"ReferenceError: logger is not defined\n    at /Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/controllers/controller-user.js:117:13\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","timestamp":"2025-09-27 12:02:39","trace":[{"column":13,"file":"/Users/tohitkhan/Documents/PGT Global Networks/Event-Management-System/Backend/controllers/controller-user.js","function":null,"line":117,"method":null,"native":false},{"column":5,"file":"node:internal/process/task_queues","function":"process.processTicksAndRejections","line":105,"method":"processTicksAndRejections","native":false}]}
+2025-10-03 00:07:31 [[31merror[39m]: uncaughtException: logger is not defined
+ReferenceError: logger is not defined
+    at C:\Users\Pranav\MP1\OrbitWCE\Backend\controllers\controller-user.js:117:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  "error": {},
+  "stack": "ReferenceError: logger is not defined\n    at C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\controllers\\controller-user.js:117:13\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+  "exception": true,
+  "date": "Fri Oct 03 2025 00:07:31 GMT+0530 (India Standard Time)",
+  "process": {
+    "pid": 15388,
+    "uid": null,
+    "gid": null,
+    "cwd": "C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend",
+    "execPath": "C:\\Program Files\\nodejs\\node.exe",
+    "version": "v22.13.1",
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\server.js"
+    ],
+    "memoryUsage": {
+      "rss": 40009728,
+      "heapTotal": 32878592,
+      "heapUsed": 30232056,
+      "external": 20780516,
+      "arrayBuffers": 18337751
+    }
+  },
+  "os": {
+    "loadavg": [
+      0,
+      0,
+      0
+    ],
+    "uptime": 52729.875
+  },
+  "trace": [
+    {
+      "column": 13,
+      "file": "C:\\Users\\Pranav\\MP1\\OrbitWCE\\Backend\\controllers\\controller-user.js",
+      "function": null,
+      "line": 117,
+      "method": null,
+      "native": false
+    },
+    {
+      "column": 5,
+      "file": "node:internal/process/task_queues",
+      "function": "process.processTicksAndRejections",
+      "line": 105,
+      "method": "processTicksAndRejections",
+      "native": false
+    }
+  ]
+}

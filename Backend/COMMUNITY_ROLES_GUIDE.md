@@ -1,68 +1,77 @@
-# Community Roles Database Storage Guide
+# Community Roles Database Storage Guide  
 
-This guide explains how to store and manage the 12 community roles in the database for the Event Management System.
+This guide explains how to store and manage the 17 club/community roles in the database for **OrbitWCE** — the Community & Event Management System for Walchand College of Engineering, Sangli.  
 
-## Overview
+---
 
-The system supports 12 distinct community roles, each with specific permissions and capabilities. These roles are stored in the MongoDB database as part of the User model.
+## Overview  
 
-## 12 Community Roles
+OrbitWCE supports **17 distinct college clubs and technical communities**, each having its own coordinator account for managing events, members, and reports.  
+These roles are stored in the MongoDB database as part of the **User model**.
 
-1. **Community Youth Coordinator** - `community-youth-coordinator`
-2. **Community Education Leader** - `community-education-leader`
-3. **Community Health Advocate** - `community-health-advocate`
-4. **Community Environmental Lead** - `community-environmental-lead`
-5. **Community Arts & Culture** - `community-arts-culture`
-6. **Community Sports Coordinator** - `community-sports-coordinator`
-7. **Community Business Leader** - `community-business-leader`
-8. **Community Religious Leader** - `community-religious-leader`
-9. **Community Social Worker** - `community-social-worker`
-10. **Community Tech Coordinator** - `community-tech-coordinator`
-11. **Community Volunteer Coordinator** - `community-volunteer-coordinator`
-12. **Community Senior Coordinator** - `community-senior-coordinator`
+---
 
-## Database Schema
+## 17 Community Roles  
 
-### User Model Structure
+1. **Rotaract Club Of WCE Sangli**  
+2. **Personality Advancement Circle of Engineers (PACE)**  
+3. **Google Developer Groups (GDG WCE)**  
+4. **ACM WCE Chapter**  
+5. **Art Circle**  
+6. **Microsoft Learn Students Club (WCE MLSC)**  
+7. **Walchand Linux User Group (WLUG)**  
+8. **ACSES Coordinator**  
+9. **Electrical Engineering Students Association (EESA)**  
+10. **Electronics Engineering Students Association (ELESA)**  
+11. **Civil Engineering Students Association (CESA)**  
+12. **Students Association of Information Technology (SAIT)**  
+13. **Mechanical Engineering Students Association (MESA)**  
+14. **Association of Students for Theoretical Reasoning in AI (ASTRA)**  
+15. **Student Organization For Technical Activities (SOFTA)**  
+16. **CodeChef WCE Chapter (CodeChef)**  
+17. **Team Vulcan Robotics**
 
-The User model includes the following fields for community roles:
+---
+
+## Database Schema  
+
+### User Model Structure  
 
 ```javascript
 {
-  name: String,           // Full name of the community leader
-  email: String,         // Unique email address
-  password: String,      // Hashed password
-  role: String,          // One of the 12 community role types
-  isVerified: Boolean,   // Email verification status
+  name: String,           // Full club/community name
+  email: String,          // Club coordinator email
+  password: String,       // Hashed password
+  role: String,           // Always 'community' for clubs
+  isVerified: Boolean,    // True after verification
   
-  // Community-specific fields
-  bio: String,           // Community organization description
-  motto: String,         // Organization motto/slogan
-  website: String,       // Organization website
-  phone: String,         // Contact phone number
-  address: String,       // Physical address
+  // Club-specific info
+  bio: String,            // About the club
+  motto: String,          // Club tagline or motto
+  website: String,        // Club website or page link
+  phone: String,          // Coordinator contact number
+  address: String,        // WCE campus location
   
-  // Additional fields
+  // Optional fields
   teamMembers: [{
     name: String,
     role: String,
     bio: String
   }],
-  skills: [String],      // Areas of expertise
   socialLinks: {
     linkedin: String,
-    portfolio: String,
+    instagram: String,
     github: String,
-    twitter: String
+    youtube: String
   }
 }
-```
+
 
 ## How to Store Community Roles
 
 ### Method 1: Automatic Seeding (Recommended)
 
-Run the automated seeding script to create all 12 community role users:
+Run the automated seeding script to create all 17 club coordinator accounts:
 
 ```bash
 # Navigate to the backend directory
@@ -77,6 +86,8 @@ npm run seed:community
 # Or run all seeders (SuperAdmin + Community Roles)
 npm run seed:all
 ```
+This command automatically creates all 17 club roles using credentials stored in .env.
+
 
 ### Method 2: Manual Creation via API
 
@@ -88,10 +99,10 @@ POST /api/v1/auth/register
 Content-Type: application/json
 
 {
-  "name": "Community Youth Coordinator",
-  "email": "youth.coordinator@community.org",
-  "password": "YouthCoord2024!",
-  "role": "community-youth-coordinator"
+  "name": "Name",
+  "email": "Email",
+  "password": "Password",
+  "role": "Role"
 }
 ```
 
@@ -100,10 +111,10 @@ Content-Type: application/json
 curl -X POST http://localhost:3000/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Community Youth Coordinator",
-    "email": "youth.coordinator@community.org",
-    "password": "YouthCoord2024!",
-    "role": "community-youth-coordinator"
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role"
   }'
 ```
 
@@ -119,16 +130,16 @@ const createCommunityUser = async () => {
   const hashedPassword = await bcrypt.hash('YouthCoord2024!', 10);
   
   const user = new User({
-    name: 'Community Youth Coordinator',
-    email: 'youth.coordinator@community.org',
+    name: 'Name',
+    email: 'Email',
     password: hashedPassword,
-    role: 'community-youth-coordinator',
+    role: 'Role',
     isVerified: true,
-    bio: 'Dedicated to empowering youth in our community',
-    motto: 'Empowering the next generation',
-    website: 'https://youth.community.org',
-    phone: '+1-555-YOUTH-01',
-    address: '123 Youth Center Drive, Community City, CC 12345'
+    bio: 'Bio',
+    motto: 'Motto',
+    website: 'Website',
+    phone: 'Phone',
+    address: 'Address'
   });
   
   await user.save();
@@ -137,15 +148,13 @@ const createCommunityUser = async () => {
 
 ## Environment Variables
 
-Ensure your `.env` file contains the community role credentials:
+Ensure your `.env` file contains the community role and Super Admin credentials:
 
 ```bash
-# 12 Community Role Credentials
-COMMUNITY_YOUTH_COORDINATOR_EMAIL=youth.coordinator@community.org
-COMMUNITY_YOUTH_COORDINATOR_PASSWORD=YouthCoord2024!
-COMMUNITY_EDUCATION_LEADER_EMAIL=education.leader@community.org
-COMMUNITY_EDUCATION_LEADER_PASSWORD=EduLead2024!
-# ... (continue for all 12 roles)
+# Community Role Credentials
+COMMUNITY_EMAIL=Email
+COMMUNITY_PASSWORD=Password
+# ... (continue for all)
 ```
 
 ## Database Operations
@@ -153,47 +162,30 @@ COMMUNITY_EDUCATION_LEADER_PASSWORD=EduLead2024!
 ### Checking Stored Roles
 ```javascript
 // Find all community role users
-const communityUsers = await User.find({ 
-  role: { $regex: /^community-/ } 
-});
-
-// Find specific role
-const youthCoordinators = await User.find({ 
-  role: 'community-youth-coordinator' 
-});
-
-// Count roles
-const roleCounts = await User.aggregate([
-  { $match: { role: { $regex: /^community-/ } } },
-  { $group: { _id: "$role", count: { $sum: 1 } } }
-]);
+const communityUsers = await User.find({ role: 'community' });
 ```
 
 ### Updating Roles
 ```javascript
 // Update user role
 await User.findOneAndUpdate(
-  { email: 'user@example.com' },
-  { role: 'community-health-advocate' }
+  { email: 'Email' },
+  { motto: 'Motto' }
 );
 ```
 
 ### Deleting Roles
 ```javascript
 // Delete specific community role user
-await User.deleteOne({ email: 'old.coordinator@community.org' });
-
-// Delete all community roles (use with caution)
-await User.deleteMany({ role: { $regex: /^community-/ } });
+await User.deleteOne({ email: 'oldclub@wce.ac.in' });
 ```
 
 ## Validation Rules
 
-- **Email**: Must be unique across all users
-- **Role**: Must be one of the predefined 12 community role strings
-- **Password**: Automatically hashed before storage
-- **Phone**: Optional, stored as string
-- **Website**: Must be valid URL format
+- **Email**: Must be unique for each club
+- **Role**: Must be 'community'
+- **Password**: Will be auto-hashed
+- **Club bio & motto**: Optional but recommended
 
 ## Testing the Setup
 
@@ -221,8 +213,8 @@ After seeding, test the setup:
    curl -X POST http://localhost:3000/api/v1/auth/login \
      -H "Content-Type: application/json" \
      -d '{
-       "email": "youth.coordinator@community.org",
-       "password": "YouthCoord2024!"
+       "email": "Email",
+       "password": "Password"
      }'
    ```
 

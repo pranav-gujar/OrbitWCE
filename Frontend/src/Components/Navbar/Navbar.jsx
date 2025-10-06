@@ -177,9 +177,9 @@ const Navbar = () => {
             >
               <div className="relative">
                 <img
-                  src="/PGT.png"
+                  src="/ProjectLogo.png"
                   alt="PGT Logo"
-                  className="h-20 w-auto transition-transform duration-500 group-hover:rotate-[-5deg]"
+                  className="h-28 w-auto "
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 via-transparent to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
               </div>

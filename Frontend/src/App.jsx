@@ -36,6 +36,8 @@ import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
 import TermsAndConditions from './pages/Legal/TermsAndConditions';
 import About from './pages/About/About';
 
+import ScrollToTopButton from './Components/ScrollToTop/ScrollToTopButton';
+
 // Component to normalize the path by removing extra slashes
 const NormalizedRoute = ({ children }) => {
   const location = useLocation();
@@ -239,6 +241,7 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <AppContent />
+      <ScrollToTopButton />
     </BrowserRouter>
   )
 }

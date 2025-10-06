@@ -97,7 +97,7 @@ const Loader = () => {
         initial="hidden"
         animate="visible"
       >
-        <h2 className="text-2xl font-bold text-white mb-2">PGT Global Networks</h2>
+        <h2 className="text-2xl font-bold text-white mb-2">OrbitWCE</h2>
         <p className="text-gray-400 text-sm">Loading your experience...</p>
       </motion.div>
     </div>
