@@ -164,3 +164,53 @@
   }
 }
 2025-10-03 00:25:47 [[32minfo[39m]: Email sent to pranavgujar2005@gmail.com after 1 attempts 
+2025-10-10 00:19:45 [[32minfo[39m]: Queueing email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Registration Confirmation: SE1"
+}
+2025-10-10 00:19:45 [[32minfo[39m]: Attempting to send email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Registration Confirmation: SE1"
+}
+2025-10-10 00:19:45 [[32minfo[39m]: Email queued successfully {
+  "to": "pranavgujar2005@gmail.com",
+  "queuePosition": 0
+}
+2025-10-10 00:19:48 [[32minfo[39m]: SMTP connection verified 
+2025-10-10 00:19:51 [[32minfo[39m]: Email sent successfully: {
+  "to": "pranavgujar2005@gmail.com",
+  "messageId": "<b07f4372-c4d2-9981-3bef-8cd057856146@gmail.com>",
+  "response": "250 2.0.0 OK  1760035793 98e67ed59e1d1-33b626407c4sm272568a91.6 - gsmtp",
+  "envelope": {
+    "from": "pranavgujar974@gmail.com",
+    "to": [
+      "pranavgujar2005@gmail.com"
+    ]
+  }
+}
+2025-10-10 00:19:51 [[32minfo[39m]: Email sent to pranavgujar2005@gmail.com after 1 attempts 
+2025-10-10 00:26:46 [[32minfo[39m]: Queueing email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Registration Confirmation: Ignight"
+}
+2025-10-10 00:26:46 [[32minfo[39m]: Attempting to send email {
+  "to": "pranavgujar2005@gmail.com",
+  "subject": "Registration Confirmation: Ignight"
+}
+2025-10-10 00:26:46 [[32minfo[39m]: Email queued successfully {
+  "to": "pranavgujar2005@gmail.com",
+  "queuePosition": 0
+}
+2025-10-10 00:26:48 [[32minfo[39m]: SMTP connection verified 
+2025-10-10 00:26:52 [[32minfo[39m]: Email sent successfully: {
+  "to": "pranavgujar2005@gmail.com",
+  "messageId": "<13aa4bf8-adce-9142-02b9-9227bfb0aca7@gmail.com>",
+  "response": "250 2.0.0 OK  1760036214 d9443c01a7336-29034e43d60sm35817025ad.58 - gsmtp",
+  "envelope": {
+    "from": "pranavgujar974@gmail.com",
+    "to": [
+      "pranavgujar2005@gmail.com"
+    ]
+  }
+}
+2025-10-10 00:26:52 [[32minfo[39m]: Email sent to pranavgujar2005@gmail.com after 1 attempts 
