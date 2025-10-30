@@ -17,7 +17,7 @@ import AuthContext from "../../AuthContext/AuthContext";
 
 // import ScrollToTop from "../../Components/ScrollToTop/ScrollToTop";
 
-import mentorImg from "../../assets/team/mentor.jpeg";
+import mentorImg from "../../assets/team/mentor.jpg";
 import rutuja from "../../assets/team/rutuja.jpg";
 import deepmala from "../../assets/team/deepmala.jpg";
 import pranav from "../../assets/team/pranav.jpg";

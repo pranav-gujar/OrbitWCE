@@ -214,3 +214,53 @@
   }
 }
 2025-10-10 00:26:52 [[32minfo[39m]: Email sent to pranavgujar2005@gmail.com after 1 attempts 
+2025-10-15 08:41:47 [[32minfo[39m]: Queueing email {
+  "to": "pranavgujar974@gmail.com",
+  "subject": "Verify Your Email - New Code"
+}
+2025-10-15 08:41:47 [[32minfo[39m]: Attempting to send email {
+  "to": "pranavgujar974@gmail.com",
+  "subject": "Verify Your Email - New Code"
+}
+2025-10-15 08:41:47 [[32minfo[39m]: Email queued successfully {
+  "to": "pranavgujar974@gmail.com",
+  "queuePosition": 0
+}
+2025-10-15 08:41:49 [[32minfo[39m]: SMTP connection verified 
+2025-10-15 08:41:53 [[32minfo[39m]: Email sent successfully: {
+  "to": "pranavgujar974@gmail.com",
+  "messageId": "<df5dd9e9-d3d9-9ae8-cdf9-a6733135467a@gmail.com>",
+  "response": "250 2.0.0 OK  1760497914 d2e1a72fcca58-7992d09f407sm16906219b3a.43 - gsmtp",
+  "envelope": {
+    "from": "pranavgujar974@gmail.com",
+    "to": [
+      "pranavgujar974@gmail.com"
+    ]
+  }
+}
+2025-10-15 08:41:53 [[32minfo[39m]: Email sent to pranavgujar974@gmail.com after 1 attempts 
+2025-10-15 16:50:42 [[32minfo[39m]: Queueing email {
+  "to": "pranavgujar974@gmail.com",
+  "subject": "Verify Your Email - New Code"
+}
+2025-10-15 16:50:42 [[32minfo[39m]: Attempting to send email {
+  "to": "pranavgujar974@gmail.com",
+  "subject": "Verify Your Email - New Code"
+}
+2025-10-15 16:50:42 [[32minfo[39m]: Email queued successfully {
+  "to": "pranavgujar974@gmail.com",
+  "queuePosition": 0
+}
+2025-10-15 16:50:44 [[32minfo[39m]: SMTP connection verified 
+2025-10-15 16:50:47 [[32minfo[39m]: Email sent successfully: {
+  "to": "pranavgujar974@gmail.com",
+  "messageId": "<55e6f702-4225-fed2-1ae1-50b2b733d675@gmail.com>",
+  "response": "250 2.0.0 OK  1760527247 d9443c01a7336-29034e1853fsm194861055ad.41 - gsmtp",
+  "envelope": {
+    "from": "pranavgujar974@gmail.com",
+    "to": [
+      "pranavgujar974@gmail.com"
+    ]
+  }
+}
+2025-10-15 16:50:47 [[32minfo[39m]: Email sent to pranavgujar974@gmail.com after 1 attempts 
